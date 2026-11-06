@@ -523,7 +523,7 @@
           <div>
             <div class="body">
               <p>1937 年 9 月 22–23 日，第二次国共合作宣言发表，<strong>抗日民族统一战线正式形成</strong>。红军主力改编为八路军（约 4.6 万人），南方红军游击队改编为新四军（1.03 万余人）。此后，正面战场与敌后战场协力合作——台儿庄与平型关，同属一个 1938 年的春天前后的中国。</p>
-              <p>而站出来的不只是军队。右边十六张照片会自动轮换（1.5 秒一张，可点按钮暂停），也可以点箭头或圆点自己翻：一二·九运动里学生的游行队伍、东北抗联的林间身影、回民支队的刺杀训练、南洋机工的车队、上海妇女的缝纫机、四行仓库的机枪手、南泥湾的水田、奔赴前线的学生军——不同的身份，同一条战线。</p>
+              <p>而站出来的不只是军队。右边十六张照片会自动轮换（2 秒一张，可点按钮暂停），也可以点箭头或圆点自己翻：一二·九运动里学生的游行队伍、东北抗联的林间身影、回民支队的刺杀训练、南洋机工的车队、上海妇女的缝纫机、四行仓库的机枪手、南泥湾的水田、奔赴前线的学生军——不同的身份，同一条战线。</p>
             </div>
             <div class="person">
               <div class="who">邓玉芬</div>
@@ -1002,7 +1002,7 @@
     function ufGo(i){ ufIdx = (i + UF.length) % UF.length; ufShow(); }
     function ufStart(){
       if(ufTimer || ufReduced || ufPaused) return;
-      ufTimer = setInterval(function(){ ufGo(ufIdx + 1); }, 1500);
+      ufTimer = setInterval(function(){ ufGo(ufIdx + 1); }, 2000);
     }
     function ufStop(){ if(ufTimer){ clearInterval(ufTimer); ufTimer = null; } }
     function ufRestart(){ ufStop(); ufStart(); }
