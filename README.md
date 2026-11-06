@@ -17,16 +17,14 @@
 | `ppt/index.html` | 互动展示 PPT（18 页，浏览器打开即可看；第 5 页为 16 张统一战线照片轮播，第 18 页为演讲稿） |
 | `演讲稿.md` | 课堂演讲稿，约 2400 字，约 10–11 分钟，配 PPT 页码与操作提示 |
 | `300字总结.md` | 作业要求的 300 字总结（306 字） |
-| `kangzhan-ppt-3-photos/photos/` | 7 张故事照片原图 + 1 张备用国军群像（`web/` 为网页用小图） |
+| `photos/` | 7 张故事照片原图 + 1 张备用国军群像（`web/` 为网页用小图） |
 | `restored/gifs/` | 4 段 AI 复原动图（GIF 版，平型关 / 滇缅公路 / 远征军上色版、护士黑白版） |
 | `restored/mp4/` | 同上 4 段动图的 MP4 版 |
 | `restored/*_color.webp` | AI 上色后静帧 |
-| `kangzhan-ppt-3-photos/united_front/`、`kangzhan-ppt-3-photos/united_front_more/` | 第 5 页轮播补充照片（回民支队、南侨机工车队、陈嘉庚合影、缝衣妇女、四行仓库、八路军行军、南泥湾、学生军等） |
+| `united_front/`、`united_front_more/` | 第 5 页轮播补充照片（回民支队、南侨机工车队、陈嘉庚合影、缝衣妇女、四行仓库、八路军行军、南泥湾、学生军等） |
 | `docs/` | 考证资料：课本要点摘录、全部照片来源与授权、研究简报 |
 | `restored/README.md` | AI 复原制作说明：做法、核查出的 AI 偏差、没做的事与原因 |
 | `restored/render_smooth.py` | 动图平滑重渲染脚本（逐帧 LANCZOS 推近） |
-
-> 说明：照片文件夹目前嵌在 `kangzhan-ppt-3-photos/` 内（上传时整包传上来的结构），`ppt/index.html` 里的图片路径已按这个实际位置修正过。如果以后把三个照片文件夹移到仓库根目录，记得把 `ppt/index.html` 里的 `kangzhan-ppt-3-photos/` 前缀去掉。
 
 ## 诚实标注（展示时主动说明）
 
