@@ -13,7 +13,7 @@ W, H = 1280, 720
 def caption_overlay(text):
     ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(ov)
-    f = ImageFont.truetype(SERIF, 36)
+    f = ImageFont.truetype(SERIF, 36, index=2)  # SC face, not JP (see render_clips_v2.py)
     bbox = d.textbbox((0, 0), text, font=f)
     tw, th = bbox[2]-bbox[0], bbox[3]-bbox[1]
     x, y = 36, 36

@@ -44,23 +44,25 @@ def srt_ts(sec):
 def wrap_sentence(s, limit=24):
     """Split every sentence into exactly two display lines, so the subtitle
     block is always the same height and never jumps up/down between 1-line
-    and 2-line cards. Break at a comma/、 near the middle; if the sentence
-    is short, break at its comma or near the middle anyway.
+    and 2-line cards. Break at a comma/、/； near the middle.
+    IMPORTANT: always prefer a comma break over splitting mid-sentence —
+    a mid split can tear a 2-char word apart (e.g. 生活 -> 生|活), which
+    reads badly. So: any comma beats any mid split, even an unbalanced one.
     Returns the text with an SRT \\N break."""
-    # candidate break positions: a ， 、 ； after 30%-70% of the text
-    lo, hi = int(len(s) * 0.30), int(len(s) * 0.70)
-    cands = [i for i, ch in enumerate(s) if ch in "，、；" and lo <= i <= hi]
-    if not cands:
-        cands = [i for i, ch in enumerate(s) if ch in "，、；" and lo <= i]
-    if not cands:
-        # no comma: split near the middle (Chinese has no spaces, safe)
-        mid = len(s) // 2
-        if len(s) <= 4:
-            return s  # too short to split meaningfully; keep 1 line
-        return s[:mid] + "\\N" + s[mid:]
     mid = len(s) // 2
-    i = min(cands, key=lambda x: abs(x - mid))
-    return s[:i + 1] + "\\N" + s[i + 1:]
+    cands = [i for i, ch in enumerate(s) if ch in "，、；"]
+    if cands:
+        # prefer commas in the middle band, else any comma (closest to mid)
+        lo, hi = int(len(s) * 0.25), int(len(s) * 0.75)
+        inband = [i for i in cands if lo <= i <= hi]
+        pool = inband if inband else cands
+        i = min(pool, key=lambda x: abs(x - mid))
+        return s[:i + 1] + "\\N" + s[i + 1:]
+    # no comma at all: split near the middle (Chinese has no spaces;
+    # unavoidable for a punctuation-less sentence)
+    if len(s) <= 4:
+        return s  # too short to split meaningfully; keep 1 line
+    return s[:mid] + "\\N" + s[mid:]
 
 def sentences(text):
     t = re.sub(r"\[[^\]]*\]", "", text)
