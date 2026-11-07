@@ -25,11 +25,19 @@ def caption_overlay(text):
 JOBS = [
     # A2: Dec 9th Movement — street crowd (students take to the streets)
     ("A2", 1370.0, 17.9, "一二·九运动 · 1935年12月"),
+    # A3: soldiers on the move — Eighth Route Army marching (v8)
+    ("A3", 3060.0, 17.7, "八路军行军 · 1937年秋"),
+    # B3: battle explosion — front line, generic caption (v8)
+    ("B3", 3420.0, 19.3, "前线 · 1937年"),
     # C2: Burma Road — the famous switchback mountain road (real footage)
     ("C2", 2810.0, 15.5, "滇缅公路 · 1937年"),
     # D4: civilians crossing a bridge — people in the rear area (v7)
     ("D4", 1970.0, 13.1, "大后方 · 1940年代"),
 ]
+
+# E2 (Guangzhou aerial video, Pexels) is cut separately, not from Battle of China:
+#   ffmpeg -ss 2 -i footage/guangzhou_aerial.mp4 -t 15.7 -vf scale=1280:720 -r 24
+#   then burn the caption "今天 · 城市" (see the v8 build notes in README).
 
 for name, start, dur, cap in JOBS:
     # 1) cut + scale/crop the 4:3 footage to 1280x720 (fill, centre-crop)

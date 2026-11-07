@@ -174,7 +174,7 @@ JOBS = [
     ("A1", os.path.join(KP, "photos/pingxingguan.jpg"), 17.9, "in", "平型关 · 1937年9月", True, "走向联合"),
     ("A2", os.path.expanduser("~/workspace/kangzhan-ppt-package/ppt/assets/dec9_students.jpg"), 17.9, "pan_r", "一二·九运动 · 1935年12月", True, None),
     ("A3", os.path.join(KP, "united_front_more/eighth_route_marching.jpg"), 17.7, "pan_l", "八路军行军 · 1937年秋", True, None),
-    ("B1", os.path.join(KP, "photos/taierzhuang.jpg"), 19.3, "in", "台儿庄 · 1938年", True, "两个战场"),
+    ("B1", os.path.join(KP, "photos/taierzhuang.jpg"), 19.3, "out", "台儿庄 · 1938年", True, "两个战场"),
     ("B2", os.path.join(KP, "united_front_more/sihang_warehouse.jpg"), 19.3, "out", "四行仓库 · 1937年", True, None),
     ("B3", os.path.join(KP, "restored/pingxingguan_color.webp"), 19.3, "diag", "平型关 · 1937年9月", True, None),
     ("C1", os.path.join(KP, "united_front/huimin.jpg"), 15.5, "pan_r", "回民支队 · 1939—1940年", True, "各界同心"),
