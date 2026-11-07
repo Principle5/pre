@@ -14,7 +14,7 @@ CLIPS = os.path.join(BASE, "clips2")
 NARR = os.path.join(BASE, "narration")
 SRT = os.path.join(BASE, "subtitles.ass")
 MUSIC = os.path.join(BASE, "music/echoes_in_the_archive.mp3")
-OUT = os.path.join(BASE, "united_front_video_v8.mp4")
+OUT = os.path.join(BASE, "united_front_video_v9.mp4")
 
 ORDER = ["title_open", "A1", "A2", "A3", "B1", "B2", "B3",
          "C1", "C2", "C3", "C4", "C5", "D1", "D2", "D3", "D4",
@@ -65,8 +65,20 @@ for j, L in enumerate("ABCDE"):
     a_parts.append(f"[{idx}:a]adelay={ms}|{ms}[a{L}]")
 a_parts.append("[aA][aB][aC][aD][aE]amix=inputs=5:normalize=0[amix]")
 a_parts.append(f"[amix]apad,atrim=0:{TOTAL:.3f},afade=t=in:st=0:d=0.6,afade=t=out:st={TOTAL-1.0:.3f}:d=1.0[narr]")
-# background music: looped, quiet (0.15), gentle fade in/out
-a_parts.append(f"[25:a]atrim=0:{TOTAL:.3f},volume=0.15,afade=t=in:st=0:d=2.0,afade=t=out:st={TOTAL-3.0:.3f}:d=3.0[mus]")
+# background music: DYNAMIC (v9) — louder where there is no narration, quiet
+# under the voice so it stays clear.
+#   opening title (0-9.2s, no voice): 0.25, ducking to 0.15 as narration starts
+#   narration (9.2-280.3s): 0.15
+#   after the last voice line ends (280.3s): swell 0.15 -> 0.40 over 2s,
+#   holding 0.40 through the closing title so the ending lands, then the
+#   usual 3s fade-out. NARR_END = E start (238.3) + E narration (42.0s).
+NARR_END = SEC_START["E"] + 42.0
+A0 = SEC_START["A"]
+_vol = (f"if(lt(t,{A0:.1f}),0.25,"
+        f"if(lt(t,{A0+2:.1f}),0.25-0.10*(t-{A0:.1f})/2,"
+        f"if(lt(t,{NARR_END:.1f}),0.15,"
+        f"if(lt(t,{NARR_END+2:.1f}),0.15+0.25*(t-{NARR_END:.1f})/2,0.40))))")
+a_parts.append(f"[25:a]atrim=0:{TOTAL:.3f},volume='{_vol}':eval=frame,afade=t=in:st=0:d=2.0,afade=t=out:st={TOTAL-3.0:.3f}:d=3.0[mus]")
 a_parts.append("[narr][mus]amix=inputs=2:normalize=0[aout]")
 
 fc = ";".join(parts + a_parts)

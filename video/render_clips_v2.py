@@ -21,7 +21,11 @@ def smoothstep(t):
     return 3*t*t - 2*t*t*t
 
 def font(path, size):
-    return ImageFont.truetype(path, size)
+    # Noto CJK .ttc order: 0=JP, 1=KR, 2=SC, 3=TC, 4=HK.
+    # PIL defaults to index 0 (JP). We must use index 2 (SC) so Chinese
+    # glyphs (e.g. 关) render in their Simplified-Chinese form, not the
+    # Japanese variant. This was the root cause of the recurring 关 issue.
+    return ImageFont.truetype(path, size, index=2)
 
 # --- vignette mask (darken corners ~18%) ---
 _vig = Image.new("L", (W, H), 0)
@@ -69,6 +73,73 @@ def render_motion(name, src, dur, motion, caption=None, historical=True,
                   section_title=None):
     im = Image.open(src).convert("RGB")
     iw, ih = im.size
+    # Portrait photos (e.g. 台儿庄 590x636) must NOT be cover-cropped into
+    # 16:9 — that cuts away ~54% of the height (heads and legs gone, only
+    # torsos left). Instead: blurred darkened background fill + the full
+    # photo fitted in the frame, with a gentle zoom on the foreground.
+    portrait = iw < ih
+    if portrait:
+        # background: cover, heavily blurred + darkened
+        s_bg = max(W/iw, H/ih)
+        bg = im.resize((round(iw*s_bg), round(ih*s_bg)), Image.LANCZOS)
+        # centre-crop bg to frame
+        bx = (bg.width - W)//2; by = (bg.height - H)//2
+        bg = bg.crop((bx, by, bx+W, by+H))
+        bg = bg.filter(ImageFilter.GaussianBlur(28))
+        bg = Image.fromarray(np.clip(np.asarray(bg, dtype=np.float32)*0.45, 0, 255).astype(np.uint8))
+        # foreground: fit inside frame (full photo visible)
+        s_fg = min(W*0.92/iw, H*0.92/ih)
+        fg_w, fg_h = round(iw*s_fg), round(ih*s_fg)
+        fg = im.resize((fg_w, fg_h), Image.LANCZOS)
+        n = max(1, round(dur*FPS))
+        cap = caption_overlay(caption) if caption else None
+        st = section_title_overlay(section_title) if section_title else None
+        out = os.path.join(CLIPS, name + ".mp4")
+        cmd = ["ffmpeg","-y","-v","error",
+               "-f","rawvideo","-pix_fmt","rgb24","-s",f"{W}x{H}","-r",str(FPS),"-i","-",
+               "-c:v","libx264","-pix_fmt","yuv420p","-crf","20","-preset","medium",
+               "-movflags","+faststart", out]
+        p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+        for i in range(n):
+            t = i/(n-1) if n > 1 else 0
+            e = smoothstep(t)
+            # gentle shrink: foreground 1.06 -> 1.00 (clearly gets smaller)
+            z = 1.06 - 0.06*e
+            zw, zh = round(fg_w*z), round(fg_h*z)
+            fr_fg = fg.resize((zw, zh), Image.LANCZOS)
+            fr = bg.copy()
+            fr.paste(fr_fg, ((W-zw)//2, (H-zh)//2))
+            if historical:
+                arr = np.asarray(fr, dtype=np.float32)
+                arr *= _vig_factor[..., None]
+                arr += _grain[i % len(_grain)]
+                fr = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8))
+            if cap is not None or st is not None:
+                fr = fr.convert("RGBA")
+                if cap is not None:
+                    fr.paste(cap, (0, 0), cap)
+                if st is not None:
+                    tsec = i / FPS
+                    if tsec < 0.8:
+                        a = tsec / 0.8
+                    elif tsec < 2.8:
+                        a = 1.0
+                    elif tsec < 3.6:
+                        a = 1.0 - (tsec - 2.8) / 0.8
+                    else:
+                        a = 0.0
+                    if a > 0:
+                        r, g, b, al = st.split()
+                        al = al.point(lambda v: int(v * a))
+                        st_a = Image.merge("RGBA", (r, g, b, al))
+                        fr.paste(st_a, (0, 0), st_a)
+                fr = fr.convert("RGB")
+            p.stdin.write(fr.tobytes())
+        p.stdin.close(); p.wait()
+        if p.returncode != 0:
+            raise RuntimeError(f"ffmpeg failed for {name}")
+        print(f"{name}: {dur}s portrait-fit -> {out}", flush=True)
+        return
     # base scaled to cover frame*1.14 (headroom; v7 zoom 1.00<->1.09 is the
     # middle ground — v5's 1.12 cropped too tight, v6's 1.06 felt static)
     s = max(W*1.14/iw, H*1.14/ih)
@@ -143,7 +214,10 @@ def title_card(name, title, subtitle, sub2=None, dur=8):
     img = Image.new("RGB", (W, H), (10, 9, 8))
     d = ImageDraw.Draw(img)
     f_title = font(SERIF_B, 92)
-    f_sub = font(SERIF_B, 40)
+    # Subtitle in Regular (not Bold): at 40px the Bold 关 looked heavy and
+    # muddy on video; Regular renders 关 cleaner and gives a better
+    # title/subtitle hierarchy.
+    f_sub = font(SERIF, 40)
     f_sub2 = font(SERIF, 30)
     bbox = d.textbbox((0, 0), title, font=f_title)
     tw = bbox[2]-bbox[0]
