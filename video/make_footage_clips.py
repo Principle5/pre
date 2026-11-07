@@ -27,8 +27,9 @@ JOBS = [
     ("A2", 1370.0, 17.9, "一二·九运动 · 1935年12月"),
     # A3: soldiers on the move — Eighth Route Army marching (v8)
     ("A3", 3060.0, 17.7, "八路军行军 · 1937年秋"),
-    # B3: battle explosion — front line, generic caption (v8)
-    ("B3", 3420.0, 19.3, "前线 · 1937年"),
+    # B3 was battle footage (generic 前线) until v11; v12 B3 is the Sihang
+    # Warehouse photo so the narration/visual order matches (#12 平型关 ->
+    # #13 台儿庄 -> #14 四行仓库). The battle footage is retired.
     # C2: Burma Road — the famous switchback mountain road (real footage)
     ("C2", 2810.0, 15.5, "滇缅公路 · 1937年"),
     # D4: civilians crossing a bridge — people in the rear area (v7)

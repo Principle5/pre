@@ -14,14 +14,14 @@ CLIPS = os.path.join(BASE, "clips2")
 NARR = os.path.join(BASE, "narration")
 SRT = os.path.join(BASE, "subtitles.ass")
 MUSIC = os.path.join(BASE, "music/echoes_in_the_archive.mp3")
-OUT = os.path.join(BASE, "united_front_video_v11.mp4")
+OUT = os.path.join(BASE, "united_front_video_v12.mp4")
 
 ORDER = ["title_open", "A1", "A2", "A3", "B1", "B2", "B3",
          "C1", "C2", "C3", "C4", "C5", "D1", "D2", "D3", "D4",
          "E1", "E2", "E3", "title_close"]
 DURS = {"title_open": 10.0,
         "A1": 17.9, "A2": 17.9, "A3": 17.7,
-        "B1": 19.3, "B2": 19.3, "B3": 19.3,
+        "B1": 19.3, "B2": 12.0, "B3": 26.6,
         "C1": 15.5, "C2": 15.5, "C3": 15.5, "C4": 15.5, "C5": 15.3,
         "D1": 13.1, "D2": 13.1, "D3": 13.1, "D4": 13.1,
         "E1": 15.7, "E2": 15.7, "E3": 15.6,
