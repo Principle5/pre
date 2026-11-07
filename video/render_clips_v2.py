@@ -69,9 +69,9 @@ def render_motion(name, src, dur, motion, caption=None, historical=True,
                   section_title=None):
     im = Image.open(src).convert("RGB")
     iw, ih = im.size
-    # base scaled to cover frame*1.10 (gentle headroom; v5's 1.18 + 1.12 zoom
-    # cropped too tight and some photos became unreadable)
-    s = max(W*1.10/iw, H*1.10/ih)
+    # base scaled to cover frame*1.14 (headroom; v7 zoom 1.00<->1.09 is the
+    # middle ground — v5's 1.12 cropped too tight, v6's 1.06 felt static)
+    s = max(W*1.14/iw, H*1.14/ih)
     base = im.resize((round(iw*s), round(ih*s)), Image.LANCZOS)
     bw, bh = base.size
     cx0, cy0 = bw/2, bh/2
@@ -88,19 +88,20 @@ def render_motion(name, src, dur, motion, caption=None, historical=True,
         t = i/(n-1) if n > 1 else 0
         e = smoothstep(t)
         # motion -> (zoom, centre dx, centre dy) as fractions of frame
-        # gentle range (v6): zoom 1.00<->1.06, pan +/-0.04 — photos stay readable
+        # middle range (v7): zoom 1.00<->1.09, pan +/-0.06 — visible motion,
+        # photos stay readable (v5 1.12 too tight, v6 1.06 too static)
         if motion == "in":
-            z = 1.00 + 0.06*e; dx, dy = 0.0, 0.0
+            z = 1.00 + 0.09*e; dx, dy = 0.0, 0.0
         elif motion == "out":
-            z = 1.06 - 0.06*e; dx, dy = 0.0, 0.0
+            z = 1.09 - 0.09*e; dx, dy = 0.0, 0.0
         elif motion == "pan_l":   # view drifts left
-            z = 1.04; dx = 0.04 - 0.08*e; dy = 0.0
+            z = 1.06; dx = 0.06 - 0.12*e; dy = 0.0
         elif motion == "pan_r":   # view drifts right
-            z = 1.04; dx = -0.04 + 0.08*e; dy = 0.0
+            z = 1.06; dx = -0.06 + 0.12*e; dy = 0.0
         elif motion == "diag":    # zoom in + drift up-right
-            z = 1.00 + 0.06*e; dx = -0.03 + 0.06*e; dy = 0.02 - 0.04*e
+            z = 1.00 + 0.09*e; dx = -0.045 + 0.09*e; dy = 0.03 - 0.06*e
         else:
-            z = 1.00 + 0.06*e; dx, dy = 0.0, 0.0
+            z = 1.00 + 0.09*e; dx, dy = 0.0, 0.0
         cw, ch = W/z, H/z
         cx = cx0 + dx*W
         cy = cy0 + dy*H
@@ -185,18 +186,15 @@ JOBS = [
     ("D2", os.path.join(KP, "photos/bloody_saturday.jpg"), 13.1, "in", "上海南站 · 1937年8月28日", True, None),
     ("D3", os.path.join(KP, "photos/nurse.jpg"), 13.1, "out", "战地护士 · 1944年", True, None),
     ("D4", os.path.join(KP, "united_front_more/students_corps.jpg"), 13.1, "pan_l", "学生军 · 1941—1942年", True, None),
-    ("E1", None, 15.7, "pan_r", "今天 · 校园", False, "今天"),
-    ("E2", None, 15.7, "in", "今天 · 城市", False, None),
-    ("E3", None, 15.6, "pan_l", "今天 · 教室", False, None),
+    ("E1", os.path.join(IMG, "guangzhou/scut_south.jpg"), 15.7, "pan_r", "今天 · 校园", False, "今天"),
+    ("E2", os.path.join(IMG, "guangzhou/canton_tower.jpg"), 15.7, "in", "今天 · 城市", False, None),
+    ("E3", os.path.join(IMG, "guangzhou/zhujiang_night.jpg"), 15.6, "pan_l", "今天 · 珠江新城", False, None),
 ]
 
 def resolve_modern():
-    for stem, key in [("modern-campus", "E1"), ("modern-city", "E2"), ("modern-classroom", "E3")]:
-        hits = sorted(glob.glob(os.path.join(IMG, f"media-generation-{stem}-*.webp")))
-        if hits:
-            for j, job in enumerate(JOBS):
-                if job[0] == key:
-                    JOBS[j] = (job[0], hits[0], job[2], job[3], job[4], job[5], job[6])
+    # v7: E1/E2/E3 now use real Guangzhou photos (Wikimedia Commons, CC BY-SA),
+    # not the AI-generated webp files. The AI files remain in images/ unused.
+    pass
 
 if __name__ == "__main__":
     only = sys.argv[1:] or None

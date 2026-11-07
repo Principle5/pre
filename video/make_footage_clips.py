@@ -27,6 +27,8 @@ JOBS = [
     ("A2", 1370.0, 17.9, "一二·九运动 · 1935年12月"),
     # C2: Burma Road — the famous switchback mountain road (real footage)
     ("C2", 2810.0, 15.5, "滇缅公路 · 1937年"),
+    # D4: civilians crossing a bridge — people in the rear area (v7)
+    ("D4", 1970.0, 13.1, "大后方 · 1940年代"),
 ]
 
 for name, start, dur, cap in JOBS:
