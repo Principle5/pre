@@ -41,28 +41,63 @@ def srt_ts(sec):
     s = int(sec % 60); ms = int(round((sec - int(sec)) * 1000))
     return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
 
-def wrap_sentence(s, limit=24):
-    """Split every sentence into exactly two display lines, so the subtitle
-    block is always the same height and never jumps up/down between 1-line
-    and 2-line cards. Break at a comma/、/； near the middle.
-    IMPORTANT: always prefer a comma break over splitting mid-sentence —
-    a mid split can tear a 2-char word apart (e.g. 生活 -> 生|活), which
-    reads badly. So: any comma beats any mid split, even an unbalanced one.
-    Returns the text with an SRT \\N break."""
-    mid = len(s) // 2
-    cands = [i for i, ch in enumerate(s) if ch in "，、；"]
-    if cands:
-        # prefer commas in the middle band, else any comma (closest to mid)
-        lo, hi = int(len(s) * 0.25), int(len(s) * 0.75)
-        inband = [i for i in cands if lo <= i <= hi]
-        pool = inband if inband else cands
-        i = min(pool, key=lambda x: abs(x - mid))
-        return s[:i + 1] + "\\N" + s[i + 1:]
-    # no comma at all: split near the middle (Chinese has no spaces;
-    # unavoidable for a punctuation-less sentence)
-    if len(s) <= 4:
-        return s  # too short to split meaningfully; keep 1 line
-    return s[:mid] + "\\N" + s[mid:]
+def wrap_sentence(s, max_chars=17):
+    """Wrap a sentence into display lines for 72pt subtitles.
+    72pt full-width char ≈ 72px; a 1280px frame fits ~17 chars/line.
+    Break ONLY at punctuation (，、；。：) so a word is never split
+    (the old 30%-70% comma window + mid-split tore 生活 into 生|活).
+    Strategy: try 2 lines first (balanced, both ≤17 chars), then 3 lines.
+    Short sentences with a comma still break into 2 lines (keeps the
+    subtitle block height consistent, and #35 stays '今天，/我们生活在和平里。').
+    Returns the text with SRT \\N breaks."""
+    import itertools
+    n = len(s)
+    # break points: indices just after a punctuation char
+    breaks = [i for i, ch in enumerate(s) if ch in "，、；。："]
+
+    def find_lines(target):
+        # find `target-1` break points making `target` lines, each <= max_chars
+        if target == 2:
+            best = None
+            for i in breaks:
+                a, b = s[:i + 1], s[i + 1:]
+                if len(a) <= max_chars and len(b) <= max_chars:
+                    score = max(len(a), len(b))
+                    if best is None or score < best[0]:
+                        best = (score, [a, b])
+            return best[1] if best else None
+        if target == 3:
+            best = None
+            for i, j in itertools.combinations(breaks, 2):
+                a, b, c = s[:i + 1], s[i + 1:j + 1], s[j + 1:]
+                if len(a) <= max_chars and len(b) <= max_chars and len(c) <= max_chars:
+                    score = max(len(a), len(b), len(c))
+                    if best is None or score < best[0]:
+                        best = (score, [a, b, c])
+            return best[1] if best else None
+        return None
+
+    if n <= max_chars:
+        # short: 2 lines if it has a comma (block-height consistency), else 1
+        if breaks:
+            mid = n // 2
+            i = min(breaks, key=lambda x: abs(x - mid))
+            return s[:i + 1] + "\\N" + s[i + 1:]
+        return s
+    # longer than one line: prefer 2 lines, else 3
+    lines = find_lines(2)
+    if lines:
+        return "\\N".join(lines)
+    lines = find_lines(3)
+    if lines:
+        return "\\N".join(lines)
+    # fallback: a single punctuation-free segment exceeds max_chars;
+    # hard-split into chunks and cap at 3 lines
+    chunks = [s[i:i + max_chars] for i in range(0, n, max_chars)]
+    while len(chunks) > 3:
+        best = min(range(len(chunks) - 1), key=lambda i: len(chunks[i]) + len(chunks[i + 1]))
+        chunks[best:best + 2] = [chunks[best] + chunks[best + 1]]
+    return "\\N".join(chunks)
 
 def sentences(text):
     t = re.sub(r"\[[^\]]*\]", "", text)

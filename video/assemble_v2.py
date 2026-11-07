@@ -14,7 +14,7 @@ CLIPS = os.path.join(BASE, "clips2")
 NARR = os.path.join(BASE, "narration")
 SRT = os.path.join(BASE, "subtitles.ass")
 MUSIC = os.path.join(BASE, "music/echoes_in_the_archive.mp3")
-OUT = os.path.join(BASE, "united_front_video_v10.mp4")
+OUT = os.path.join(BASE, "united_front_video_v11.mp4")
 
 ORDER = ["title_open", "A1", "A2", "A3", "B1", "B2", "B3",
          "C1", "C2", "C3", "C4", "C5", "D1", "D2", "D3", "D4",
