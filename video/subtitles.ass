@@ -6,7 +6,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,Noto Sans CJK SC,28,&HFFFFFF,&HFFFFFF,&H000000,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
+Style: Default,Noto Serif CJK SC,32,&HFFFFFF,&HFFFFFF,&H000000,&H000000,0,0,0,0,100,100,0,0,1,2,0,2,10,10,10,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -19,13 +19,13 @@ Dialogue: 0,0:00:33.42,0:00:38.44,Default,,0,0,0,,{\pos(640,690)}六年里，日
 Dialogue: 0,0:00:38.34,0:00:45.44,Default,,0,0,0,,{\pos(640,690)}一九三五年，北平学生走上街头，\N喊出停止内战、一致对外。
 Dialogue: 0,0:00:45.34,0:00:51.40,Default,,0,0,0,,{\pos(640,690)}一九三六年，西安事变，\N国共两党从对峙走向谈判。
 Dialogue: 0,0:00:51.30,0:00:57.63,Default,,0,0,0,,{\pos(640,690)}全面抗战爆发之时，\N合作不再是选择，是唯一的出路。
-Dialogue: 0,0:01:00.15,0:01:07.73,Default,,0,0,0,,{\pos(640,690)}一九三七年九月，第二次国共合作实现，\N抗日民族统一战线正式形成。
-Dialogue: 0,0:01:07.63,0:01:16.66,Default,,0,0,0,,{\pos(640,690)}八路军、新四军挺进敌后，国民党军队坚守正面，\N两个战场，互相配合，互为犄角。
-Dialogue: 0,0:01:16.56,0:01:23.66,Default,,0,0,0,,{\pos(640,690)}平型关大捷，八路军出师的第一仗，\N打破了日军不可战胜的神话。
-Dialogue: 0,0:01:23.56,0:01:28.98,Default,,0,0,0,,{\pos(640,690)}台儿庄大捷，国民党军队\N在正面战场的一次大胜。
-Dialogue: 0,0:01:28.88,0:01:39.36,Default,,0,0,0,,{\pos(640,690)}淞沪会战里，四行仓库的八百壮士孤军坚守，\N上海市民隔着一条苏州河，为他们送吃的、送国旗。
-Dialogue: 0,0:01:39.26,0:01:44.43,Default,,0,0,0,,{\pos(640,690)}不同的战场，同一种坚持，\N打的是同一场战争。
-Dialogue: 0,0:01:44.33,0:01:53.12,Default,,0,0,0,,{\pos(640,690)}正面战场牵制了日军主力，敌后战场让日军处处受敌，\N两个战场，谁也离不开谁。
+Dialogue: 0,0:01:00.15,0:01:07.35,Default,,0,0,0,,{\pos(640,690)}一九三七年九月，第二次国共合作实现，\N抗日民族统一战线正式形成。
+Dialogue: 0,0:01:07.25,0:01:15.82,Default,,0,0,0,,{\pos(640,690)}八路军、新四军挺进敌后，国民党军队坚守正面，\N两个战场，互相配合，互为犄角。
+Dialogue: 0,0:01:15.72,0:01:22.46,Default,,0,0,0,,{\pos(640,690)}平型关大捷，八路军出师的第一仗，\N打破了日军不可战胜的神话。
+Dialogue: 0,0:01:22.36,0:01:27.50,Default,,0,0,0,,{\pos(640,690)}台儿庄大捷，国民党军队\N在正面战场的一次大胜。
+Dialogue: 0,0:01:27.40,0:01:37.35,Default,,0,0,0,,{\pos(640,690)}淞沪会战里，四行仓库的八百壮士孤军坚守，\N上海市民隔着一条苏州河，为他们送吃的、送国旗。
+Dialogue: 0,0:01:37.25,0:01:42.16,Default,,0,0,0,,{\pos(640,690)}不同的战场，同一种坚持，\N打的是同一场战争。
+Dialogue: 0,0:01:42.06,0:01:50.41,Default,,0,0,0,,{\pos(640,690)}正面战场牵制了日军主力，敌后战场让日军处处受敌，\N两个战场，谁也离不开谁。
 Dialogue: 0,0:01:55.65,0:01:58.75,Default,,0,0,0,,{\pos(640,690)}统一战线，\N不只在战场上。
 Dialogue: 0,0:01:58.65,0:02:06.01,Default,,0,0,0,,{\pos(640,690)}回民支队的马本斋，带着回族子弟兵，\N在冀中平原打了八百多仗。
 Dialogue: 0,0:02:05.91,0:02:12.77,Default,,0,0,0,,{\pos(640,690)}滇缅公路上，二十万民工徒手修路，\N用血肉铺出一条生命线。

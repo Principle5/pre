@@ -69,8 +69,9 @@ def render_motion(name, src, dur, motion, caption=None, historical=True,
                   section_title=None):
     im = Image.open(src).convert("RGB")
     iw, ih = im.size
-    # base scaled to cover frame*1.18 (headroom for stronger pan/zoom)
-    s = max(W*1.18/iw, H*1.18/ih)
+    # base scaled to cover frame*1.10 (gentle headroom; v5's 1.18 + 1.12 zoom
+    # cropped too tight and some photos became unreadable)
+    s = max(W*1.10/iw, H*1.10/ih)
     base = im.resize((round(iw*s), round(ih*s)), Image.LANCZOS)
     bw, bh = base.size
     cx0, cy0 = bw/2, bh/2
@@ -87,19 +88,19 @@ def render_motion(name, src, dur, motion, caption=None, historical=True,
         t = i/(n-1) if n > 1 else 0
         e = smoothstep(t)
         # motion -> (zoom, centre dx, centre dy) as fractions of frame
-        # stronger range than v2: zoom 1.00<->1.12, pan +/-0.08
+        # gentle range (v6): zoom 1.00<->1.06, pan +/-0.04 — photos stay readable
         if motion == "in":
-            z = 1.00 + 0.12*e; dx, dy = 0.0, 0.0
+            z = 1.00 + 0.06*e; dx, dy = 0.0, 0.0
         elif motion == "out":
-            z = 1.12 - 0.12*e; dx, dy = 0.0, 0.0
+            z = 1.06 - 0.06*e; dx, dy = 0.0, 0.0
         elif motion == "pan_l":   # view drifts left
-            z = 1.08; dx = 0.08 - 0.16*e; dy = 0.0
+            z = 1.04; dx = 0.04 - 0.08*e; dy = 0.0
         elif motion == "pan_r":   # view drifts right
-            z = 1.08; dx = -0.08 + 0.16*e; dy = 0.0
+            z = 1.04; dx = -0.04 + 0.08*e; dy = 0.0
         elif motion == "diag":    # zoom in + drift up-right
-            z = 1.00 + 0.12*e; dx = -0.06 + 0.12*e; dy = 0.04 - 0.08*e
+            z = 1.00 + 0.06*e; dx = -0.03 + 0.06*e; dy = 0.02 - 0.04*e
         else:
-            z = 1.00 + 0.12*e; dx, dy = 0.0, 0.0
+            z = 1.00 + 0.06*e; dx, dy = 0.0, 0.0
         cw, ch = W/z, H/z
         cx = cx0 + dx*W
         cy = cy0 + dy*H
@@ -147,7 +148,8 @@ def title_card(name, title, subtitle, sub2=None, dur=8):
     tw = bbox[2]-bbox[0]
     y = H//2 - 120
     d.text(((W-tw)/2, y), title, font=f_title, fill=(201, 164, 74))
-    d.line([(W//2-90, y+125), (W//2+90, y+125)], fill=(201, 164, 74), width=3)
+    # gold rule spans the full width of the title text (both ends)
+    d.line([((W-tw)/2, y+125), ((W+tw)/2, y+125)], fill=(201, 164, 74), width=3)
     bbox = d.textbbox((0, 0), subtitle, font=f_sub)
     sw = bbox[2]-bbox[0]
     d.text(((W-sw)/2, y+185), subtitle, font=f_sub, fill=(232, 222, 205))
