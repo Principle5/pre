@@ -66,18 +66,35 @@
 
 ### 3.2 仓库里没有（二进制/大文件，推不上去）
 
-GitHub 连接器只能推**文本、≤16MB、不删文件**。以下都不在仓库里，本地 agent 需要时按下述来源重新获取：
+GitHub 连接器只能推**文本、≤16MB、不删文件**。以下都不在仓库里。
+**素材包（图片 + 音乐 + 夜景视频 + 旁白音频）已打包成一个 zip，可直接下载**：
 
-| 内容 | 本地位置 / 大小 | 来源（重新获取） |
+- **素材包下载**（58MB，47 个文件，48 小时有效，到 **2026-11-09 19:55 CST**）：
+  https://muse.ai/files/1361893997008728/1103719518947562/ntrre1rqkm6ej3wh1id0qo1b/video_assets_pack.zip
+- 解压后得到 `asset_pack/`，内含：
+  - `images/`：全部图片——卢沟桥照片（`lugou/`，5 张，含 A1 用的二十九军照片和 1937 年航拍图）、广州照片（`guangzhou/`，4 张）、AI 生成的现代校园/城市/教室图（`media-generation-*`，v7 后已不用，留作备用）。
+  - `music/`：背景音乐 `echoes_in_the_archive.mp3`（Sascha Ende，CC BY 4.0）。
+  - `footage/gz_night_tower.mp4`、`gz_night_tower2.mp4`：Pexels 广州夜景视频（E3 用，39187697 + 39187876）。
+  - `footage/clips/`：Battle of China 侦察片段（4.3MB）。
+  - `footage/battle_meta.json`：Battle of China 各段源时间记录。
+  - `narration/sec_A.mp3`…`sec_E.mp3`：5 段旁白音频（#4 深沉男声，已生成，可直接用）。
+- **成片 v12 MP4**（39MB，到 2026-11-09 19:46 CST）：
+  https://muse.ai/files/1361893997008728/996846596156160/p6psxumbtuekm0v0d08a0lbq/united_front_video_v12.mp4
+- **以下两个大文件传不上去（>100MB），本地 agent 按来源重新下载**：
+
+| 内容 | 大小 | 来源（重新获取） |
 |---|---|---|
-| 成片 MP4（v10/v11/v12） | `~/workspace/video-united-front/united_front_video_v12.mp4`（39MB） | 见 §2 下载链接（48h 有效）；过期后需重新渲染（§4） |
-| 《The Battle of China》1944（公有领域） | `footage/battle_of_china_512kb.mp4`（262MB，3731 秒，320×240） | archive.org，id `wwf_the_battle_of_china`；另有 512×384 版 id `the-battle-of-china-1944`（393MB，更清晰） |
-| 广州航拍 E2 | `footage/guangzhou_aerial.mp4`（282MB） | Pexels，Slava Kol，CC0 |
-| 广州夜景 E3（两段） | `footage/gz_night_tower.mp4`（39187697，7.06s）、`gz_night_tower2.mp4`（39187876，8.30s） | Pexels，免费协议；下载地址 `https://www.pexels.com/download/video/<id>/` |
-| 卢沟桥照片 A1 | `images/lugou/Army_29_Fighting_1937.jpg`（600×424） | Wikimedia Commons `File:Army_29_Fighting_1937.jpg`（二十九军 1937 年卢沟桥布防）；同批另有航拍图 `File:Marco_Polo_Bridge_air_view.PNG` |
-| 背景音乐 | `music/echoes_in_the_archive.mp3` | Sascha Ende《Echoes in the Archive》，CC BY 4.0（须署名，已在片尾字幕） |
-| 旁白 MP3（5 段） | `narration/` 下的 mp3（或 `voices/`，61MB） | 用 TTS 重新生成（§4.3），或按 `本地微软配音教程.md` 在本地录 |
-| 渲染好的分段 clips | `clips2/*.mp4`（294MB，20 段） | 重新渲染即可（§4.1），不用特意保存 |
+| 《The Battle of China》1944（公有领域） | 262MB | archive.org，id `wwf_the_battle_of_china`，文件 `battle_of_china_512kb.mp4`（3731 秒，320×240）；另有 512×384 版 id `the-battle-of-china-1944`（393MB，更清晰） |
+| 广州航拍 E2 | 282MB | Pexels，Slava Kol，CC0，4K，32.9 秒；下载地址见 `video/README.md` 或 Pexels 搜索“Guangzhou aerial Slava Kol” |
+| 旁白 TTS 模型（Piper） | 63MB | 不需要。`voices/zh_CN-huayan-medium.onnx` 是本机 Piper 模型，本地 agent 用自己的 TTS 即可 |
+| 渲染好的分段 clips（`clips2/`） | 294MB | 不需要传。按 §4.1 重新渲染即可 |
+
+> 注意：素材包和成片链接都是 48 小时有效，**过期后只能重新渲染/重新下载**。
+> 如果本地 agent 拿到时链接已过期，按上表来源重新获取，不要找我要新链接（我这边也只能重新上传）。
+>
+> 另外：PPT 和视频用的**历史照片本身已经在仓库里**（`photos/`、`restored/`、`united_front/`、
+> `united_front_more/`），拉取仓库就能拿到，不用再下载。只有上面素材包里的卢沟桥照片、
+> 广州照片、音乐、夜景视频、旁白音频是不在仓库里的，这次单独打包给你了。
 
 ### 3.3 特别注意：不要重复踩的坑
 
