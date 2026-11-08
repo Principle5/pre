@@ -25,6 +25,7 @@
         --ok:#7d9b6a;
         --warn:#c9a44a;
         --guess:#8d7fb8;
+        --gold:#c59b58;
         --serif:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun","NSimSun",serif;
         --sans:"Noto Sans SC","Source Han Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Heiti SC","SimHei",sans-serif;
       }
@@ -386,6 +387,7 @@
       }
 
       @media (max-width:860px){
+        .cover-team{grid-template-columns:1fr !important; max-width:320px !important; margin:14px auto !important;}
         .slide{padding:28px 18px 36px;}
         .kicker{letter-spacing:.22em;}
         .grid2,.grid3,.cmp,.spirit{grid-template-columns:1fr;}
@@ -441,6 +443,21 @@
           <p class="meta">
             依据课本：<b>《中国近现代史纲要》第六章《中华民族的抗日战争》</b>
           </p>
+          <p class="cover-quote" style="width:100%; text-align:center; font-family:var(--serif); font-size:1.15rem; color:var(--gold); margin:18px auto 8px; letter-spacing:0.04em;">“兵民是胜利之本。” —— 毛泽东《论持久战》（1938 年 5 月）</p>
+          <div class="cover-team" style="display:grid; grid-template-columns:repeat(3, minmax(200px, 260px)); gap:16px; justify-content:center; margin:16px auto 16px; max-width:820px; width:100%;">
+            <div style="background:rgba(197,155,88,0.10); border:1px solid rgba(197,155,88,0.45); border-top:3px solid var(--gold); border-radius:6px; padding:10px 14px; text-align:center;">
+              <div style="font-size:1.08rem; font-weight:700; color:var(--gold); letter-spacing:0.06em; margin-bottom:4px;">杨 李</div>
+              <div style="font-size:0.86rem; color:var(--ink); opacity:0.92;">交互式网页 PPT 研发<br>5分钟微纪录片制作</div>
+            </div>
+            <div style="background:rgba(197,155,88,0.10); border:1px solid rgba(197,155,88,0.45); border-top:3px solid var(--gold); border-radius:6px; padding:10px 14px; text-align:center;">
+              <div style="font-size:1.08rem; font-weight:700; color:var(--gold); letter-spacing:0.06em; margin-bottom:4px;">刘 骁</div>
+              <div style="font-size:0.86rem; color:var(--ink); opacity:0.92;">历史照片 AI 复原与考证<br>下半场课堂汇报（P6–P17）</div>
+            </div>
+            <div style="background:rgba(197,155,88,0.10); border:1px solid rgba(197,155,88,0.45); border-top:3px solid var(--gold); border-radius:6px; padding:10px 14px; text-align:center;">
+              <div style="font-size:1.08rem; font-weight:700; color:var(--gold); letter-spacing:0.06em; margin-bottom:4px;">朱龙溢</div>
+              <div style="font-size:0.86rem; color:var(--ink); opacity:0.92;">抗战史料与数据考证收集<br>上半场课堂汇报（P1–P5）</div>
+            </div>
+          </div>
           <p class="hint">翻页 <span>←</span><span>→</span> 或空格 · 点击空白处也可翻页 · 目录 <span>Esc</span> · 全屏 <span>F</span> · 照片页按 <span>M</span> 切换动效 · 照片可点击放大，其中四张已嵌入 AI 复原影像</p>
         </div>
       </div>
@@ -712,12 +729,12 @@
           <h3>作品总结<span>全文 313 字（含标点）· 随作品一并提交</span></h3>
           <p>本次作品以《中国近现代史纲要》第六章为依据，选取七位抗战普通人的真实照片——平型关八路军战士、上海南站婴儿、滇缅公路女工、晋察冀护士、远征军士兵、重庆市民、台儿庄敢死队员——综合运用 AI 图像上色、图生视频微动效、Python 帧平滑与大模型检索，做成 17 页交互展示；脚本、核查记录与全部来源公开在 GitHub，可全程追溯。制作中我严格核查 AI 内容：AI 易把国军青天白日帽徽涂成红色、把两军杂色军服涂成单色；护士照片上色未成，便留黑白原片并如实说明；面对上海南站婴儿与重庆大隧道惨案，我拒绝上色与动效，以防美化苦难。历史的温度在普通人的面孔上；技术能让面孔“活”过来，但唯有经考证与伦理克制的复原，才配得上真实。</p>
         </div>
-        <div class="card" style="padding:12px 22px; margin-top:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; background:var(--panel); border:1px solid var(--line-soft); border-radius:8px;">
-          <div class="kicker" style="margin:0; font-size:13px; color:var(--red-bright); letter-spacing:.12em;">小组成员与分工</div>
-          <div style="font-size:0.95rem; color:var(--ink);">
-            <strong>杨李：</strong>PPT 与微纪录片视频制作 &nbsp;｜&nbsp;
-            <strong>刘骁：</strong>照片 AI 复原与课堂汇报 &nbsp;｜&nbsp;
-            <strong>朱龙溢：</strong>史料素材收集与课堂汇报
+        <div class="card" style="padding:14px 24px; margin-top:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; background:rgba(197,155,88,0.08); border:1px solid rgba(197,155,88,0.35); border-left:4px solid var(--gold); border-radius:8px;">
+          <div class="kicker" style="margin:0; font-size:14px; color:var(--gold); font-weight:700; letter-spacing:.12em;">小组成员与分工</div>
+          <div style="font-size:1.02rem; color:var(--ink);">
+            <strong style="color:var(--gold);">杨李：</strong>交互式网页 PPT 研发 ｜ 5分钟微纪录片制作 &nbsp;&nbsp;｜&nbsp;&nbsp;
+            <strong style="color:var(--gold);">刘骁：</strong>历史照片 AI 复原与考证 ｜ 课堂汇报（P6–P17） &nbsp;&nbsp;｜&nbsp;&nbsp;
+            <strong style="color:var(--gold);">朱龙溢：</strong>抗战史料与数据考证收集 ｜ 课堂汇报（P1–P5）
           </div>
         </div>
       </div>
