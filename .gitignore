@@ -1,0 +1,8 @@
+# Ignore large build artifacts and video files that exceed GitHub 100MB limit
+*.zip
+*.mp4
+video/*.mp4
+video/clips2/
+video/music/
+video/narration/*.mp3
+*.bak
