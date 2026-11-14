@@ -2802,6 +2802,153 @@
           scrollbar-color:rgba(224,180,109,.42) transparent;
         }
       }
+
+      /* ============================================================
+         ARCHIVAL WIPE & RESTORATION STABILIZATION FIX (commit: 83b1a2a -> stabilized)
+         1. 彻底解决 cover/contain 缩放口径撕裂：统一 Grid 居中叠层与 contain 1:1 对齐
+         2. 彻底解决 !important 状态打架：双图层常驻，由 clip-path 与 JS 状态机精准控制
+         3. 彻底消除 microShake 与全屏伪元素动画导致的 GPU 掉帧、抖动与撕裂
+         ============================================================ */
+      body::before,
+      body::after {
+        animation: none !important;
+      }
+
+      .photo-box .frame,
+      .frame {
+        position: relative !important;
+        display: grid !important;
+        place-items: center !important;
+        width: 100% !important;
+        aspect-ratio: 4 / 3 !important;
+        max-height: 56vh !important;
+        overflow: hidden !important;
+        background: #14110e !important;
+        contain: layout paint !important;
+        animation: none !important;
+      }
+
+      .photo-box .frame > img.main,
+      .photo-box .frame > img.main.gif,
+      .frame > img.main,
+      .frame > img.main.gif {
+        grid-area: 1 / 1 !important;
+        position: static !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-width: none !important;
+        max-height: none !important;
+        margin: 0 !important;
+        object-fit: contain !important;
+        object-position: center center !important;
+        transform: translateZ(0) !important;
+        transition: none !important;
+      }
+
+      .photo-box .frame > img.main,
+      .frame > img.main {
+        z-index: 1 !important;
+        display: block !important;
+      }
+
+      .photo-box .frame > img.main.gif,
+      .frame > img.main.gif {
+        z-index: 2 !important;
+        clip-path: inset(0 100% 0 0) !important;
+        opacity: 1 !important;
+        will-change: clip-path, opacity;
+        display: none;
+      }
+
+      /* 优雅发光擦除：仅在 .is-restored 时展开 clip-path */
+      .photo-box .frame.is-restored > img.main.gif,
+      .frame.is-restored > img.main.gif {
+        display: block !important;
+        clip-path: inset(0 0 0 0) !important;
+        transition: clip-path 0.85s cubic-bezier(0.22, 1, 0.36, 1) !important;
+      }
+
+      /* 切回黑白原片时的柔和隐退 */
+      .photo-box .frame.is-reverting > img.main.gif,
+      .frame.is-reverting > img.main.gif {
+        display: block !important;
+        clip-path: inset(0 0 0 0) !important;
+        opacity: 0 !important;
+        transition: opacity 0.32s ease !important;
+      }
+
+      /* 局部发光扫描光束 */
+      .photo-box .frame::before,
+      .frame::before {
+        display: none !important;
+      }
+
+      .photo-box .frame::after,
+      .frame::after {
+        content: "" !important;
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 3 !important;
+        pointer-events: none !important;
+        opacity: 0 !important;
+        background: linear-gradient(
+          90deg,
+          transparent 42%,
+          rgba(197, 155, 88, 0.14) 47.5%,
+          rgba(255, 236, 185, 0.85) 50%,
+          rgba(197, 155, 88, 0.14) 52.5%,
+          transparent 58%
+        ) !important;
+        transform: translate3d(-50%, 0, 0) !important;
+        will-change: transform, opacity;
+        box-shadow: none !important;
+      }
+
+      /* 恪守医疗伦理：对护士(#04)与白求恩(#11)等黑白图，光束采用素雅银白光 */
+      .photo-box .frame.is-bw::after,
+      .frame.is-bw::after {
+        background: linear-gradient(
+          90deg,
+          transparent 42%,
+          rgba(240, 236, 228, 0.12) 47.5%,
+          rgba(255, 255, 255, 0.72) 50%,
+          rgba(240, 236, 228, 0.12) 52.5%,
+          transparent 58%
+        ) !important;
+      }
+
+      .photo-box .frame.is-wiping::after,
+      .frame.is-wiping::after {
+        animation: archivalWipeBeam 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+      }
+
+      @keyframes archivalWipeBeam {
+        0%   { transform: translate3d(-50%, 0, 0); opacity: 0; }
+        8%   { opacity: 1; }
+        88%  { opacity: 1; }
+        100% { transform: translate3d(50%, 0, 0); opacity: 0; }
+      }
+
+      .photo-box .frame .restore-badge,
+      .frame .restore-badge { z-index: 4 !important; }
+      .photo-box .frame .veil,
+      .frame .veil          { z-index: 5 !important; }
+      .slide:not(.active) .frame > img.main.gif { visibility: hidden !important; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .photo-box .frame.is-restored > img.main.gif,
+        .frame.is-restored > img.main.gif,
+        .photo-box .frame.is-reverting > img.main.gif,
+        .frame.is-reverting > img.main.gif {
+          transition: none !important;
+        }
+        .photo-box .frame.is-wiping::after,
+        .frame.is-wiping::after {
+          animation: none !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -3450,9 +3597,10 @@
           }
         }
         tools += '<button class="tool-btn" type="button" data-zoom="'+p.id+'">点击照片放大 ⤢</button>';
+        var frameCls = "frame" + (p.restore && p.restore.bw ? " is-bw" : "");
         html += '<section class="slide photo-slide" data-title="'+p.title+'" data-time="约 45 秒">'
           + '<div class="wrap"><div class="photo-layout">'
-          +   '<div class="photo-box"><div class="frame">'
+          +   '<div class="photo-box"><div class="' + frameCls + '">'
           +     media
           +     badge
           +     veil
@@ -3622,7 +3770,28 @@
       countUp(s, cur);
       if(s.contains(ufBox)) ufStart(); else ufStop();
       markToc();
+      prefetchSlideRestore(cur);
+      setTimeout(function(){ prefetchSlideRestore(cur + 1); }, 600);
     }
+    /* prefetch restore images on slide navigation */
+    var prefetched = {};
+    function prefetchSlideRestore(idx){
+      if(idx < 0 || idx >= total) return;
+      if(navigator.connection && navigator.connection.saveData) return;
+      var rb = slides[idx].querySelector("[data-restore]");
+      if(!rb) return;
+      var pid = rb.getAttribute("data-restore");
+      if(prefetched[pid]) return;
+      var p = photoById(pid);
+      if(!p || !p.restore) return;
+      prefetched[pid] = true;
+      var target = p.restore.gif || p.restore.still;
+      if(target){
+        var im = new Image();
+        im.src = target;
+      }
+    }
+
     prevBtn.addEventListener("click", function(){ go(cur - 1, -1); });
     nextBtn.addEventListener("click", function(){ go(cur + 1, 1); });
 
@@ -3694,29 +3863,99 @@
       var rb = t.closest ? t.closest("[data-restore]") : null;
       if(rb){
         var rp = photoById(rb.getAttribute("data-restore"));
-        var rimg = document.getElementById("img-" + rp.id);
+        var frame = rb.closest(".photo-box") ? rb.closest(".photo-box").querySelector(".frame") : document.querySelector(".slide.active .frame");
         var gif = document.getElementById("gif-" + rp.id);
         var pbtn = document.querySelector('[data-pause="' + rp.id + '"]');
         var badge = document.getElementById("rbadge-" + rp.id);
-        var showGif = gif.style.display === "none";
         var hasGif = !!rp.restore.gif;
         var defaultBtnLabel = hasGif ? (rp.restore.bw ? "看动态版" : "看复原版") : (rp.restore.bw ? "看修复版" : "看上色版");
-        rb.setAttribute("aria-pressed", showGif ? "true" : "false");
-        rb.lastChild.textContent = showGif ? "看黑白原片" : defaultBtnLabel;
-        if(showGif){
-          if(!gif.getAttribute("src") || gif.getAttribute("data-paused") === "1"){
-            gif.src = gif.getAttribute("data-gif");
-            gif.removeAttribute("data-paused");
+
+        var isPressed = rb.getAttribute("aria-pressed") === "true";
+        var reqToken = (parseInt(rb.getAttribute("data-token") || "0", 10) + 1);
+        rb.setAttribute("data-token", String(reqToken));
+
+        if(!isPressed){
+          if(rb.getAttribute("data-loading") === "1"){
+            rb.removeAttribute("data-loading");
+            rb.lastChild.textContent = defaultBtnLabel;
+            return;
           }
-          rimg.style.display = "none";
-          gif.style.display = "block";
-          if(pbtn){ pbtn.style.display = ""; pbtn.textContent = "❚❚ 暂停"; }
-          badge.style.display = "block";
+
+          var targetSrc = gif.getAttribute("data-gif");
+          var loadTimer = setTimeout(function(){
+            if(String(reqToken) === rb.getAttribute("data-token")){
+              rb.lastChild.textContent = "载入复原中…";
+            }
+          }, 120);
+          rb.setAttribute("data-loading", "1");
+
+          var startWipe = function(){
+            clearTimeout(loadTimer);
+            if(String(reqToken) !== rb.getAttribute("data-token")) return;
+            rb.removeAttribute("data-loading");
+            rb.setAttribute("aria-pressed", "true");
+            rb.lastChild.textContent = "看黑白原片";
+
+            if(frame){
+              frame.classList.remove("is-reverting", "is-restored", "is-wiping");
+            }
+            gif.style.display = "block";
+
+            requestAnimationFrame(function(){
+              requestAnimationFrame(function(){
+                if(String(reqToken) !== rb.getAttribute("data-token")) return;
+                if(frame){
+                  frame.classList.add("is-restored", "is-wiping");
+                }
+                if(pbtn){ pbtn.style.display = ""; pbtn.textContent = "❚❚ 暂停"; }
+                badge.style.display = "block";
+                setTimeout(function(){
+                  if(String(reqToken) === rb.getAttribute("data-token")){
+                    if(frame) frame.classList.remove("is-wiping");
+                  }
+                }, 880);
+              });
+            });
+          };
+
+          gif.removeAttribute("data-paused");
+          if(gif.getAttribute("src") !== targetSrc){
+            gif.src = targetSrc;
+          }
+          if(gif.complete && gif.naturalWidth > 0){
+            if(gif.decode){ gif.decode().then(startWipe, startWipe); } else { startWipe(); }
+          } else {
+            var onReady = function(){
+              gif.removeEventListener("load", onReady);
+              gif.removeEventListener("error", onErr);
+              if(gif.decode){ gif.decode().then(startWipe, startWipe); } else { startWipe(); }
+            };
+            var onErr = function(){
+              clearTimeout(loadTimer);
+              gif.removeEventListener("load", onReady);
+              gif.removeEventListener("error", onErr);
+              rb.removeAttribute("data-loading");
+              rb.lastChild.textContent = defaultBtnLabel;
+            };
+            gif.addEventListener("load", onReady);
+            gif.addEventListener("error", onErr);
+          }
         } else {
-          gif.style.display = "none";
-          rimg.style.display = "";
+          rb.removeAttribute("data-loading");
+          rb.setAttribute("aria-pressed", "false");
+          rb.lastChild.textContent = defaultBtnLabel;
           if(pbtn){ pbtn.style.display = "none"; }
           badge.style.display = "none";
+
+          if(frame){
+            frame.classList.remove("is-wiping", "is-restored");
+            frame.classList.add("is-reverting");
+          }
+          setTimeout(function(){
+            if(String(reqToken) !== rb.getAttribute("data-token")) return;
+            if(frame) frame.classList.remove("is-reverting");
+            gif.style.display = "none";
+          }, 340);
         }
         return;
       }
@@ -3760,8 +3999,9 @@
         var p3 = photoById(pid);
         var img3 = document.getElementById("img-" + p3.id);
         if(img3.classList.contains("veiled")) return; /* must reveal first */
+        var rb3 = document.querySelector('[data-restore="' + p3.id + '"]');
         var gif3 = document.getElementById("gif-" + p3.id);
-        var restoredOn = !!(gif3 && gif3.style.display !== "none" && gif3.getAttribute("data-paused") !== "1");
+        var restoredOn = !!(rb3 && rb3.getAttribute("aria-pressed") === "true" && (!gif3 || gif3.getAttribute("data-paused") !== "1"));
         openLb(p3, restoredOn);
       }
     });
@@ -3814,20 +4054,22 @@
 
     go(0, 1);
 
-    /* V25-FREEZE-START —— 曲线停当前形状（方案 B · 用户授权破「运行时零脚本」） */
+    /* V25-FREEZE-START —— 曲线停当前形状 */
     (function(){
       var svg = document.getElementById("algoLive");
       if(!svg || !svg.pauseAnimations) return;
+      var algoSlide = svg.closest ? svg.closest(".slide") : null;
       var mq = window.matchMedia("(prefers-reduced-motion: reduce)"), frozen = false;
       function sync(){
-        var need = mq.matches || !!document.querySelector(".slide.active .veil");
+        var inactive = algoSlide ? !algoSlide.classList.contains("active") : false;
+        var need = mq.matches || inactive || !!document.querySelector(".slide.active .veil");
         if(need === frozen) return;
         frozen = need;
         if(need) svg.pauseAnimations(); else svg.unpauseAnimations();
       }
       if(mq.addEventListener) mq.addEventListener("change", sync); else mq.addListener(sync);
-      new MutationObserver(sync).observe(document.getElementById("stage"),
-        {subtree:true, attributes:true, attributeFilter:["class"]});
+      var obsTarget = algoSlide || document.getElementById("stage");
+      new MutationObserver(sync).observe(obsTarget, {attributes:true, attributeFilter:["class"]});
       sync();
     })();
     /* V25-FREEZE-END */
