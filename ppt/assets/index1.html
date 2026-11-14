@@ -1,0 +1,1433 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="data:," />
+    <title>面孔——抗战中的普通人｜抗日战争互动展示</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        --bg:#171512;
+        --bg2:#1f1c17;
+        --panel:#24211b;
+        --panel2:#2b2720;
+        --ink:#ece4d0;
+        --ink-dim:#b9b09a;
+        --ink-faint:#8a8271;
+        --red:#a33327;
+        --red-bright:#c34a3a;
+        --line:#3a352b;
+        --line-soft:#2e2a22;
+        --ok:#7d9b6a;
+        --warn:#c9a44a;
+        --guess:#8d7fb8;
+        --gold:#c59b58;
+        --serif:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun","NSimSun",serif;
+        --sans:"Noto Sans SC","Source Han Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Heiti SC","SimHei",sans-serif;
+      }
+      *,*::before,*::after{box-sizing:border-box;}
+      html,body{height:100%;}
+      html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+      body{
+        margin:0;background:var(--bg);color:var(--ink);
+        font-family:var(--sans);font-size:18px;line-height:1.65;
+        -webkit-font-smoothing:antialiased;overflow:hidden;
+        text-rendering:optimizeLegibility;
+      }
+      h1,h2,h3,h4,p,ul,ol,figure,blockquote{margin:0;padding:0;}
+      ul,ol{list-style:none;}
+      button{font-family:inherit;cursor:pointer;}
+      img{display:block;max-width:100%;}
+      a{color:var(--red-bright);}
+
+      /* ---------- deck ---------- */
+      .stage{position:fixed;inset:0;bottom:76px;}
+      .slide{
+        position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+        display:none;
+        padding:40px 4vw 48px;
+        scrollbar-width:thin;scrollbar-color:var(--line) transparent;
+      }
+      .slide.active{display:block;animation:slideIn .45s ease;}
+      .slide.active.back{animation:slideInBack .45s ease;}
+      @keyframes slideIn{from{opacity:0;transform:translateX(26px);}to{opacity:1;transform:none;}}
+      @keyframes slideInBack{from{opacity:0;transform:translateX(-26px);}to{opacity:1;transform:none;}}
+      .wrap{max-width:1440px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;justify-content:center;}
+
+      .kicker{
+        font-size:14px;letter-spacing:.28em;color:var(--red-bright);
+        font-weight:700;margin-bottom:16px;line-height:1.6;
+      }
+      .slide h2{
+        font-family:var(--serif);font-weight:900;font-size:clamp(34px,4.6vw,54px);
+        line-height:1.3;letter-spacing:.02em;margin-bottom:22px;
+      }
+      .lead{font-size:clamp(18px,2.1vw,22px);color:var(--ink-dim);line-height:1.75;text-align:justify;text-justify:inter-ideograph;}
+      .lead strong,.body strong{color:var(--ink);font-weight:700;}
+      .body{font-size:18px;color:var(--ink-dim);text-align:justify;text-justify:inter-ideograph;}
+      .body p+p{margin-top:12px;}
+
+      /* ---------- cover ---------- */
+      .cover{min-height:100%;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;}
+      .cover .rule{width:56px;height:3px;background:var(--red);margin:24px 0 22px;}
+      .cover h1{
+        font-family:var(--serif);font-weight:900;
+        font-size:clamp(64px,11vw,140px);line-height:1.1;letter-spacing:.06em;
+      }
+      .cover h1 .thin{font-weight:500;color:var(--ink-dim);font-size:.34em;letter-spacing:.16em;display:block;margin-top:16px;line-height:1.4;}
+      .cover .sub{font-size:clamp(19px,2.4vw,25px);color:var(--ink);font-family:var(--serif);font-weight:500;letter-spacing:.04em;line-height:1.65;max-width:34em;}
+      .cover .meta{margin-top:38px;padding-top:22px;border-top:1px solid var(--line-soft);color:var(--ink-faint);font-size:15px;line-height:1.9;}
+      .cover .meta b{color:var(--ink-dim);font-weight:500;}
+      .cover .hint{margin-top:44px;font-size:14px;color:var(--ink-faint);letter-spacing:.08em;line-height:2;}
+      .cover .hint span{border:1px solid var(--line);border-radius:4px;padding:1px 7px;margin:0 2px;color:var(--ink-dim);}
+
+      /* ---------- generic blocks ---------- */
+      .grid2{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:32px;}
+      .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:32px;}
+      .card{background:var(--panel);border:1px solid var(--line-soft);border-radius:8px;padding:28px 30px;}
+      .card h3{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:10px;}
+      .card p{font-size:16.5px;color:var(--ink-dim);text-align:justify;text-justify:inter-ideograph;}
+      .num-badge{
+        font-family:var(--serif);font-size:14px;color:var(--red-bright);
+        letter-spacing:.2em;margin-bottom:12px;font-weight:700;
+      }
+
+      /* ---------- timeline ---------- */
+      .tl{margin-top:48px;position:relative;}
+      .tl-track{position:absolute;left:6px;right:6px;top:40px;height:2px;background:var(--line);}
+      .tl-nodes{position:relative;z-index:1;display:flex;justify-content:space-between;margin:0 6px;}
+      .tl-node{
+        background:none;border:none;color:var(--ink-dim);
+        display:flex;flex-direction:column;align-items:center;gap:9px;
+        width:13%;padding:0;
+      }
+      .tl-dot{
+        width:20px;height:20px;border-radius:50%;background:var(--bg);
+        border:3px solid var(--ink-faint);transition:all .25s;flex:none;
+      }
+      .tl-node .yr{font-family:var(--serif);font-weight:700;font-size:17px;line-height:22px;height:22px;color:var(--ink-dim);transition:color .25s;white-space:nowrap;}
+      .tl-node .ev{font-size:14.5px;line-height:20px;height:20px;color:var(--ink-faint);white-space:nowrap;}
+      .tl-node:hover .tl-dot{border-color:var(--red-bright);}
+      .tl-node.on .tl-dot{background:var(--red);border-color:var(--red-bright);box-shadow:0 0 0 6px rgba(163,51,39,.22);}
+      .tl-node.on .yr{color:var(--ink);}
+      .tl-node.on .ev{color:var(--red-bright);}
+      .tl-detail{
+        margin-top:16px;background:var(--panel);border:1px solid var(--line-soft);
+        border-radius:8px;padding:28px 32px;min-height:132px;
+      }
+      .tl-detail h3{font-family:var(--serif);font-size:26px;margin-bottom:8px;}
+      .tl-detail h3 span{color:var(--red-bright);margin-right:12px;}
+      .tl-detail p{color:var(--ink-dim);font-size:17.5px;text-align:justify;text-justify:inter-ideograph;}
+
+      /* ---------- data ---------- */
+      .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:40px;}
+      .stat{background:var(--panel);border:1px solid var(--line-soft);border-radius:8px;padding:30px 26px 24px;text-align:left;display:flex;flex-direction:column;}
+      .stat .big{font-family:var(--serif);font-weight:900;font-size:clamp(44px,5.2vw,64px);line-height:1.05;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.01em;display:flex;align-items:baseline;white-space:nowrap;}
+      .stat .big .count{font-variant-numeric:tabular-nums;}
+      .stat .big em{font-style:normal;color:var(--red-bright);font-size:.5em;margin-left:3px;}
+      .stat .cap{margin-top:14px;font-size:16px;color:var(--ink-dim);line-height:1.55;}
+      .footnote{
+        margin-top:30px;border-top:1px solid var(--line-soft);padding-top:18px;
+        font-size:15px;color:var(--ink-faint);text-align:justify;text-justify:inter-ideograph;
+      }
+      .footnote b{color:var(--ink-dim);font-weight:500;}
+
+      /* ---------- united front ---------- */
+      .uf-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:36px;margin-top:8px;align-items:start;}
+      .person{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--line-soft);}
+      .person:last-child{border-bottom:none;}
+      .person .who{font-family:var(--serif);font-weight:700;font-size:19px;white-space:nowrap;padding-top:1px;}
+      .person p{font-size:16.5px;color:var(--ink-dim);text-align:justify;text-justify:inter-ideograph;}
+      .photo-frame{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#000;}
+      .photo-frame img{width:100%;height:auto;filter:grayscale(1) contrast(1.05);}
+      .src-line{font-size:13.5px;color:var(--ink-faint);margin-top:10px;line-height:1.6;}
+      .identity-strip{
+        margin-top:30px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+        font-size:15px;color:var(--ink-faint);
+      }
+      .identity-strip .tag{
+        border:1px solid var(--line);border-radius:999px;padding:6px 16px;color:var(--ink-dim);
+        background:var(--panel);
+      }
+      .identity-strip .tag.hot{border-color:var(--red);color:var(--ink);}
+
+      /* ---------- united front carousel ---------- */
+      .uf-carousel{position:relative;}
+      .uf-frame{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#0c0a08;aspect-ratio:4/3;}
+      .uf-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .55s ease;filter:grayscale(1) contrast(1.05);}
+      .uf-frame img.on{opacity:1;}
+      .uf-arrow{
+        position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+        width:42px;height:42px;border-radius:50%;border:1px solid var(--line);
+        background:rgba(20,18,15,.82);color:var(--ink);font-size:20px;line-height:1;
+        display:flex;align-items:center;justify-content:center;transition:border-color .2s;
+      }
+      .uf-arrow:hover{border-color:var(--red-bright);}
+      .uf-arrow.prev{left:10px;}
+      .uf-arrow.next{right:10px;}
+      .uf-count{
+        position:absolute;right:10px;bottom:10px;z-index:3;
+        background:rgba(20,18,15,.82);border:1px solid var(--line);border-radius:999px;
+        color:var(--ink-dim);font-size:12.5px;padding:2px 11px;font-variant-numeric:tabular-nums;
+      }
+      .uf-cap{margin-top:14px;min-height:86px;}
+      .uf-cap .uf-tag{display:inline-block;border:1px solid var(--red);color:var(--ink);background:rgba(163,51,39,.12);border-radius:999px;padding:4px 14px;font-size:14px;font-weight:500;margin-bottom:8px;}
+      .uf-cap p{font-size:15px;color:var(--ink-dim);line-height:1.65;}
+      .uf-cap .src-line{margin-top:6px;}
+      .uf-dots{display:flex;gap:8px;justify-content:center;margin-top:6px;flex-wrap:wrap;}
+      .uf-dot{width:10px;height:10px;border-radius:50%;border:1px solid var(--ink-faint);background:transparent;padding:0;transition:all .2s;}
+      .uf-dot.on{background:var(--red-bright);border-color:var(--red-bright);}
+      .uf-pause-row{display:flex;justify-content:center;margin-top:12px;}
+      .uf-pause{
+        background:var(--panel2);border:1px solid var(--line);color:var(--ink-dim);
+        border-radius:999px;padding:7px 20px;font-size:14px;letter-spacing:.03em;
+        transition:border-color .2s,color .2s;
+      }
+      .uf-pause:hover{border-color:var(--ink-faint);color:var(--ink);}
+      .uf-pause[aria-pressed="true"]{color:var(--ink);border-color:var(--warn);}
+
+      /* ---------- photo slides ---------- */
+      .photo-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:start;}
+      .photo-box{position:relative;}
+      .photo-box .frame{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#000;position:relative;}
+      .photo-box img.main{width:100%;height:auto;filter:grayscale(1) contrast(1.06);cursor:zoom-in;}
+      .photo-box img.main.gif{filter:none;background:#000;}
+      .restore-badge{
+        position:absolute;left:10px;bottom:10px;z-index:4;
+        background:rgba(20,18,15,.86);border:1px solid rgba(201,164,74,.45);color:var(--warn);
+        font-size:12.5px;border-radius:4px;padding:3px 10px;letter-spacing:.04em;line-height:1.6;
+      }
+      .photo-tools{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;align-items:center;}
+      .tool-btn{
+        background:var(--panel2);border:1px solid var(--line);color:var(--ink-dim);
+        border-radius:999px;padding:9px 20px;font-size:15px;letter-spacing:.02em;display:inline-flex;align-items:center;gap:9px;
+        transition:border-color .2s,color .2s;
+      }
+      .tool-btn:hover{border-color:var(--ink-faint);color:var(--ink);}
+      .tool-btn .sw{width:30px;height:17px;border-radius:999px;background:#454034;position:relative;flex:none;transition:background .25s;}
+      .tool-btn .sw::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:var(--ink-dim);transition:all .25s;}
+      .tool-btn[aria-pressed="true"]{color:var(--ink);border-color:var(--warn);}
+      .tool-btn[aria-pressed="true"] .sw{background:var(--warn);}
+      .tool-btn[aria-pressed="true"] .sw::after{left:15px;background:#1d1a15;}
+      .photo-info .who-line{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+      .photo-info h2{margin-bottom:6px;}
+      .photo-info .when{font-size:16px;color:var(--red-bright);letter-spacing:.06em;font-weight:500;line-height:1.6;}
+      .photo-info .story{margin-top:18px;font-size:18.5px;color:var(--ink-dim);max-width:40em;line-height:1.8;}
+      .photo-info .story p+p{margin-top:10px;}
+
+      .verify{margin-top:26px;border:1px solid var(--line);border-radius:8px;background:var(--panel);overflow:hidden;}
+      .verify-head{
+        width:100%;background:var(--panel2);border:none;color:var(--ink-dim);text-align:left;
+        padding:14px 20px;font-size:15px;letter-spacing:.02em;font-weight:500;display:flex;justify-content:space-between;align-items:center;gap:10px;
+        transition:color .2s;
+      }
+      .verify-head:hover{color:var(--ink);}
+      .verify-head .chev{color:var(--ink-faint);transition:transform .25s;font-size:13px;}
+      .verify.open .verify-head .chev{transform:rotate(180deg);}
+      .verify-body{display:none;padding:2px 20px 18px;}
+      .verify.open .verify-body{display:block;}
+      .vrow{display:flex;gap:10px;padding:8px 0;font-size:15.5px;color:var(--ink-dim);align-items:flex-start;}
+      .vrow+.vrow{border-top:1px dashed var(--line-soft);}
+      .vtag{flex:none;font-size:12.5px;font-weight:700;border-radius:4px;padding:2px 9px;margin-top:2px;letter-spacing:.05em;}
+      .vtag.ok{background:rgba(125,155,106,.16);color:var(--ok);border:1px solid rgba(125,155,106,.45);}
+      .vtag.warn{background:rgba(201,164,74,.13);color:var(--warn);border:1px solid rgba(201,164,74,.45);}
+      .vtag.guess{background:rgba(141,127,184,.14);color:var(--guess);border:1px solid rgba(141,127,184,.45);}
+
+      /* P6 veil */
+      .veil{
+        position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;gap:10px;
+        align-items:center;justify-content:center;text-align:center;padding:24px 20px;
+        background:rgba(18,16,13,.52);
+      }
+      .veil p{font-family:var(--serif);font-size:16px;color:var(--ink);max-width:22em;line-height:1.7;letter-spacing:.04em;}
+      .veil .small{font-family:var(--sans);font-size:12.5px;color:var(--ink-dim);line-height:1.7;}
+      .veil button{
+        background:rgba(20,18,15,.88);border:1px solid var(--ink-faint);color:var(--ink);font-size:13.5px;border-radius:6px;
+        padding:8px 20px;letter-spacing:.05em;margin-top:4px;transition:border-color .2s;
+      }
+      .veil button:hover{border-color:var(--ink);}
+      .photo-box img.main.veiled{filter:blur(16px) grayscale(1) brightness(.75);cursor:default;}
+
+      /* ---------- uniform compare ---------- */
+      .cmp{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:32px;}
+      .cmp .card h3{font-size:24px;}
+      .cmp dl{margin-top:6px;}
+      .cmp .row{display:flex;gap:14px;padding:11px 0;border-top:1px dashed var(--line-soft);font-size:16.5px;}
+      .cmp dt{flex:none;width:4.5em;color:var(--ink);font-weight:700;}
+      .cmp dd{margin:0;color:var(--ink-dim);}
+      .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;}
+      .chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:4px 12px 4px 7px;font-size:13.5px;color:var(--ink-dim);background:var(--bg2);}
+      .chip i{width:15px;height:15px;border-radius:50%;flex:none;border:1px solid rgba(255,255,255,.18);}
+      .takeaway{
+        margin-top:26px;background:rgba(163,51,39,.1);border:1px solid rgba(163,51,39,.4);
+        border-radius:8px;padding:22px 28px;font-size:17.5px;color:var(--ink);line-height:1.75;
+      }
+      .takeaway b{color:var(--red-bright);}
+
+      /* ---------- reflection / method ---------- */
+      .bias-card .card h3{color:var(--ink);}
+      .bias-card .card h3 span{color:var(--red-bright);font-family:var(--sans);font-size:14px;letter-spacing:.15em;display:block;margin-bottom:6px;font-weight:700;}
+      .steps{display:flex;flex-direction:column;gap:0;margin-top:28px;}
+      .step{display:flex;gap:20px;padding:17px 0;border-bottom:1px solid var(--line-soft);align-items:flex-start;}
+      .step:last-child{border-bottom:none;}
+      .step .n{
+        flex:none;width:40px;height:40px;border-radius:50%;border:1.5px solid var(--red);
+        color:var(--red-bright);font-family:var(--serif);font-weight:700;
+        display:flex;align-items:center;justify-content:center;font-size:18px;
+      }
+      .step h3{font-size:19px;font-family:var(--serif);margin-bottom:3px;}
+      .step p{font-size:16px;color:var(--ink-dim);text-align:justify;text-justify:inter-ideograph;}
+      .legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:24px;font-size:15px;color:var(--ink-dim);align-items:center;}
+
+      /* ---------- closing ---------- */
+      .spirit{display:grid;grid-template-columns:1fr 1fr;gap:18px 40px;margin:34px 0 10px;}
+      .spirit li{
+        font-family:var(--serif);font-weight:700;font-size:clamp(24px,3.2vw,34px);
+        padding:16px 0;border-bottom:1px solid var(--line-soft);display:flex;gap:18px;align-items:baseline;
+      }
+      .spirit li span{color:var(--red-bright);font-size:15px;font-family:var(--sans);letter-spacing:.2em;flex:none;}
+      .think{
+        margin-top:30px;border:1px solid var(--line);border-radius:8px;padding:24px 30px;background:var(--panel);
+      }
+      .think .t{font-size:13.5px;letter-spacing:.25em;color:var(--ink-faint);margin-bottom:10px;}
+      .think p{font-family:var(--serif);font-size:21px;}
+
+      /* ---------- sources ---------- */
+      .src-table{width:100%;border-collapse:collapse;margin-top:24px;font-size:15px;}
+      .src-table th,.src-table td{padding:11px 12px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top;}
+      .src-table th{color:var(--ink-faint);font-weight:500;letter-spacing:.08em;font-size:13.5px;}
+      .src-table td{color:var(--ink-dim);}
+      .src-table td:first-child{color:var(--ink);white-space:nowrap;font-weight:500;}
+      .src-table a{word-break:break-all;font-size:13.5px;}
+      .summary-box{
+        margin-top:20px;background:var(--panel);border:1px solid var(--line-soft);border-radius:8px;padding:18px 24px;
+      }
+      .summary-box h3{font-family:var(--serif);font-size:21px;margin-bottom:12px;}
+      .summary-box h3 span{font-size:13.5px;color:var(--ink-faint);font-family:var(--sans);font-weight:400;margin-left:10px;}
+      .summary-box p{font-size:16.5px;color:var(--ink-dim);line-height:1.9;text-align:justify;}
+
+      /* ---------- speech script ---------- */
+      .script-sec{margin-top:30px;}
+      .script-sec h3{font-family:var(--serif);font-size:23px;margin-bottom:10px;}
+      .script-sec h3 span{color:var(--red-bright);font-family:var(--sans);font-size:14px;letter-spacing:.12em;margin-left:12px;font-weight:500;}
+      .script-sec p{font-size:18px;color:var(--ink-dim);line-height:1.9;text-align:justify;text-justify:inter-ideograph;}
+      .script-sec p+p{margin-top:10px;}
+      .script-sec p strong{color:var(--ink);}
+      .script-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:15.5px;}
+      .script-table th,.script-table td{padding:9px 12px;border-bottom:1px solid var(--line-soft);text-align:left;}
+      .script-table th{color:var(--ink-faint);font-weight:500;font-size:13.5px;letter-spacing:.08em;}
+      .script-table td{color:var(--ink-dim);}
+      .script-table td:first-child{color:var(--ink);white-space:nowrap;}
+
+      /* ---------- bottom bar ---------- */
+      .bar{
+        position:fixed;left:0;right:0;bottom:0;height:76px;z-index:40;
+        background:rgba(23,21,18,.94);backdrop-filter:blur(8px);
+        border-top:1px solid var(--line-soft);
+        display:flex;align-items:center;gap:16px;padding:0 20px;
+      }
+      .bar .progress{position:absolute;top:-1px;left:0;height:2px;background:var(--red);transition:width .4s ease;}
+      .nav-btn{
+        background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+        width:48px;height:48px;border-radius:8px;font-size:20px;line-height:1;
+        display:flex;align-items:center;justify-content:center;flex:none;
+      }
+      .nav-btn:hover:not(:disabled){border-color:var(--red-bright);}
+      .nav-btn:disabled{opacity:.32;cursor:default;}
+      .page-no{font-size:15px;color:var(--ink-dim);white-space:nowrap;font-variant-numeric:tabular-nums;}
+      .page-no b{color:var(--ink);font-size:17px;}
+      .bar .title-mini{font-size:14.5px;color:var(--ink-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;text-align:center;}
+      .toc-btn{
+        background:none;border:1px solid var(--line);color:var(--ink-dim);border-radius:8px;
+        padding:11px 20px;font-size:15px;flex:none;
+      }
+      .toc-btn:hover{color:var(--ink);border-color:var(--ink-faint);}
+      .kbd-hint{font-size:12px;color:var(--ink-faint);white-space:nowrap;}
+
+      /* ---------- TOC overlay ---------- */
+      .overlay{
+        position:fixed;inset:0;z-index:60;background:rgba(15,13,11,.96);
+        display:none;overflow-y:auto;padding:40px 5vw 60px;
+      }
+      .overlay.open{display:block;}
+      .overlay .head{display:flex;justify-content:space-between;align-items:baseline;max-width:1340px;margin:0 auto 8px;}
+      .overlay h2{font-family:var(--serif);font-size:30px;}
+      .overlay .sub{color:var(--ink-faint);font-size:15px;max-width:1340px;margin:0 auto 26px;}
+      .close-btn{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:10px 22px;font-size:15px;}
+      .toc-grid{max-width:1340px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+      .toc-item{
+        text-align:left;background:var(--panel);border:1px solid var(--line-soft);border-radius:8px;
+        padding:18px 22px;color:var(--ink);display:flex;gap:16px;align-items:flex-start;width:100%;
+      }
+      .toc-item:hover{border-color:var(--red);}
+      .toc-item.cur{border-color:var(--red);background:rgba(163,51,39,.1);}
+      .toc-item .no{font-family:var(--serif);color:var(--red-bright);font-weight:700;font-size:17px;flex:none;padding-top:1px;}
+      .toc-item .tt{font-size:17px;font-weight:500;line-height:1.45;}
+      .toc-item .tm{font-size:13px;color:var(--ink-faint);margin-top:4px;}
+
+      /* ---------- lightbox ---------- */
+      .lightbox{
+        position:fixed;inset:0;z-index:70;background:rgba(10,9,7,.97);
+        display:none;flex-direction:column;align-items:center;justify-content:center;padding:26px;
+      }
+      .lightbox.open{display:flex;}
+      .lightbox img{max-width:min(92vw,1180px);max-height:76vh;width:auto;height:auto;border:1px solid var(--line);border-radius:6px;filter:grayscale(1) contrast(1.06);}
+      .lightbox img.still-color{filter:none;}
+      .lightbox img.gif{filter:none;}
+      .lightbox .cap{margin-top:18px;max-width:820px;text-align:center;}
+      .lightbox .cap .t{font-family:var(--serif);font-size:21px;}
+      .lightbox .cap .s{font-size:14px;color:var(--ink-faint);margin-top:6px;line-height:1.6;}
+      .lightbox .x{
+        position:absolute;top:18px;right:20px;background:var(--panel2);border:1px solid var(--line);
+        color:var(--ink);border-radius:8px;width:42px;height:42px;font-size:18px;
+      }
+
+      @media (max-width:860px){
+        .cover-team{grid-template-columns:1fr !important; max-width:320px !important; margin:14px auto !important;}
+        .slide{padding:28px 18px 36px;}
+        .kicker{letter-spacing:.22em;}
+        .grid2,.grid3,.cmp,.spirit{grid-template-columns:1fr;}
+        .grid3,.cmp{gap:14px;}
+        .stats{grid-template-columns:1fr 1fr;gap:12px;margin-top:26px;}
+        .stat{padding:20px 16px 16px;}
+        .uf-layout{grid-template-columns:1fr;gap:24px;}
+        .photo-layout{grid-template-columns:1fr;gap:26px;}
+        .photo-tools{margin-top:10px;}
+        .photo-info .story{margin-top:12px;}
+        .verify{margin-top:18px;}
+        .verify-body{padding:2px 14px 14px;}
+        .verify-head{padding:12px 14px;}
+        .toc-grid{grid-template-columns:1fr;}
+        .tl-node .ev{display:none;}
+        .tl-node .yr{font-size:11px;letter-spacing:-.01em;}
+        .tl-detail{padding:20px 18px;}
+        .kbd-hint,.bar .title-mini{display:none;}
+        .bar{gap:8px;padding:0 10px;}
+        .toc-btn{padding:8px 12px;}
+        .cover h1{font-size:60px;letter-spacing:.05em;}
+        .cover h1 .thin{letter-spacing:.14em;}
+        .cover .meta{margin-top:28px;}
+        .cover .hint{margin-top:32px;}
+        .src-table{font-size:12.5px;}
+        .src-table th,.src-table td{padding:8px 6px;}
+        .src-table td:first-child{white-space:normal;}
+        .summary-box{padding:20px 18px;}
+        .spirit{gap:8px 0;}
+      }
+      @media (max-width:400px){
+        .stats{grid-template-columns:1fr;}
+        .stat .big{font-size:46px;}
+      }
+      @media (prefers-reduced-motion:reduce){
+        .slide.active,.slide.active.back{animation:none;}
+        .bar .progress,.tl-dot{transition:none;}
+      }
+    </style>
+  </head>
+  <body>
+
+  <div class="stage" id="stage">
+
+    <!-- 1 封面 -->
+    <section class="slide" data-title="封面" data-time="约 30 秒">
+      <div class="wrap">
+        <div class="cover">
+          <div class="kicker">《中国近现代史纲要》课程作业 · AI 历史场景复原与考证</div>
+          <h1>面孔<span class="thin">抗 战 中 的 普 通 人</span></h1>
+          <div class="rule"></div>
+          <p class="sub">抗日战争影像的 AI 动态复原 —— 十四张面孔，十四年抗战群像</p>
+          <p class="meta">
+            依据课本：<b>《中国近现代史纲要》第六章《中华民族的抗日战争》</b>
+          </p>
+          <p class="cover-quote" style="width:100%; text-align:center; font-family:var(--serif); font-size:1.15rem; color:var(--gold); margin:18px auto 8px; letter-spacing:0.04em;">“兵民是胜利之本。” —— 毛泽东《论持久战》（1938 年 5 月）</p>
+          <div class="cover-team" style="display:grid; grid-template-columns:repeat(3, minmax(200px, 260px)); gap:16px; justify-content:center; margin:16px auto 16px; max-width:820px; width:100%;">
+            <div style="background:rgba(197,155,88,0.10); border:1px solid rgba(197,155,88,0.45); border-top:3px solid var(--gold); border-radius:6px; padding:10px 14px; text-align:center;">
+              <div style="font-size:1.08rem; font-weight:700; color:var(--gold); letter-spacing:0.06em; margin-bottom:4px;">杨 李</div>
+              <div style="font-size:0.86rem; color:var(--ink); opacity:0.92;">交互式网页 PPT 研发<br>5分钟微纪录片制作</div>
+            </div>
+            <div style="background:rgba(197,155,88,0.10); border:1px solid rgba(197,155,88,0.45); border-top:3px solid var(--gold); border-radius:6px; padding:10px 14px; text-align:center;">
+              <div style="font-size:1.08rem; font-weight:700; color:var(--gold); letter-spacing:0.06em; margin-bottom:4px;">刘 骁</div>
+              <div style="font-size:0.86rem; color:var(--ink); opacity:0.92;">历史照片 AI 复原与考证<br>下半场课堂汇报（P6–P24）</div>
+            </div>
+            <div style="background:rgba(197,155,88,0.10); border:1px solid rgba(197,155,88,0.45); border-top:3px solid var(--gold); border-radius:6px; padding:10px 14px; text-align:center;">
+              <div style="font-size:1.08rem; font-weight:700; color:var(--gold); letter-spacing:0.06em; margin-bottom:4px;">朱龙溢</div>
+              <div style="font-size:0.86rem; color:var(--ink); opacity:0.92;">抗战史料与数据考证收集<br>上半场课堂汇报（P1–P5）</div>
+            </div>
+          </div>
+          <p class="hint">翻页 <span>←</span><span>→</span> 或空格 · 点击空白处也可翻页 · 目录 <span>Esc</span> · 全屏 <span>F</span> · 照片页按 <span>M</span> 切换动效 · 照片可点击放大，其中八张含动态复原、三张含静态修复对照</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 为什么是普通人 -->
+    <section class="slide" data-title="为什么是普通人" data-time="约 40 秒">
+      <div class="wrap">
+        <div class="kicker">选题说明</div>
+        <h2>不拍大战役，拍人</h2>
+        <p class="lead">不止看宏大战局，更凝视具体的人。一寸山河一寸血，历史最终落在一张张具体的面孔上。</p>
+        <div class="grid3">
+          <div class="card">
+            <div class="num-badge">做法</div>
+            <h3>十四张照片，十四年全民族群像</h3>
+            <p>课本第六章写邓玉芬送夫送子、写马本斋回民支队、写三千五百万伤亡——宏大数字背后皆是具体的人。本作品从公有领域档案馆与特藏中“择优删补”精选十四组普通人影像，串联起正面战场、敌后生产与民主建设、大后方筑路、平民苦难与国际反法西斯战线。</p>
+          </div>
+          <div class="card">
+            <div class="num-badge">技术</div>
+            <h3>八张动图＋三张静帧完成复原</h3>
+            <p>综合运用 AI 图像上色、图生视频微动效模型、Python 帧平滑脚本（render_smooth.py）与大模型检索工具。坚持<strong>“动的是镜头，不是人”</strong>，原片与复原版随时一键对照，全流程脚本与核查记录于 GitHub 开源可追溯。</p>
+          </div>
+          <div class="card">
+            <div class="num-badge">立场</div>
+            <h3>复原不等于真实，考证决定对错</h3>
+            <p>AI 易将国军青天白日帽徽误涂为红星、将两军杂色军服涂成“一刀切”的单色，甚至将白色纱布染成血迹。我们对每张复原图逐项比对史料，刻意保留典型 AI 错误供课堂审视，并对惨案影像坚守“不上色”的伦理底线。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 时间线 -->
+    <section class="slide" data-title="交互时间线 1931–1945" data-time="约 1 分钟">
+      <div class="wrap">
+        <div class="kicker">十四年抗战</div>
+        <h2>从九一八到胜利日</h2>
+        <p class="lead">点击时间轴上的节点，查看每个节点在课本中的位置。十四张历史面孔背后的普通人，就生活并战斗在这条时间线之上。十四年不是一个抽象的数字：从东北的白山黑水，到上海的废墟、重庆的防空洞，再到缅北的丛林——每一年，都有普通人在为这一年付出代价。</p>
+        <div class="tl">
+          <div class="tl-nodes" id="tlNodes"></div>
+          <div class="tl-track"></div>
+        </div>
+        <div class="tl-detail" id="tlDetail"></div>
+      </div>
+    </section>
+
+    <!-- 4 数据页 -->
+    <section class="slide" data-title="数字背后" data-time="约 1 分钟">
+      <div class="wrap">
+        <div class="kicker">数据</div>
+        <h2>数字背后，是人</h2>
+        <p class="lead">读懂课本数字背后的史源演进：统计口径每一次扩大的背后，都是曾被遗漏的同胞重新回到国家记忆之中。</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="big"><span class="count" data-count="3500">0</span><em>万+</em></div>
+            <p class="cap">抗日战争中中国军民伤亡总数，其中军队伤亡 380 余万</p>
+          </div>
+          <div class="stat">
+            <div class="big"><span class="count" data-count="171.4" data-dec="1">0</span><em>万</em></div>
+            <p class="cap">敌后战场对敌作战 12.5 万余次，消灭日、伪军人数（其中日军 52.7 万余人）</p>
+          </div>
+          <div class="stat">
+            <div class="big"><span class="count" data-count="128">0</span><em>万</em></div>
+            <p class="cap">1945 年 9 月，侵华日军向中国战区投降的人数</p>
+          </div>
+          <div class="stat">
+            <div class="big"><span class="count" data-count="268">0</span><em>次</em></div>
+            <p class="cap">1938 年 2 月至 1944 年 12 月，陪都重庆遭受日军空袭的次数</p>
+          </div>
+        </div>
+        <p class="footnote"><b>数字是怎么来的：</b>“3500 万以上”出自中央党史研究室 2004 年启动的“抗日战争时期中国人口伤亡和财产损失”调研工程（历时 10 年、成果 300 本），2015 年 7 月 14 日由国新办吹风会公布。更早的口径——1947 年国民政府行政院赔偿委员会统计为 1278 万余人，但不含东北、台湾、海外华侨的 1000 多万伤亡，也未计 1931–1937 年与敌后的损失。<b>引用数字必须带口径</b>，这是本页想演示的第一条考证纪律。另：直接经济损失 1000 多亿美元、间接 5000 多亿美元（按 1937 年比价）。</p>
+      </div>
+    </section>
+
+    <!-- 5 统一战线 -->
+    <section class="slide" data-title="抗日民族统一战线" data-time="约 50 秒">
+      <div class="wrap">
+        <div class="kicker">全民族抗战</div>
+        <h2>抗日民族统一战线</h2>
+        <p class="lead" style="margin-bottom:18px;">从“一盘散沙”拧成一股绳的全民族群像</p>
+        <div class="uf-layout">
+          <div>
+            <div class="body">
+              <p>1937 年 9 月 22–23 日，第二次国共合作宣言发表，<strong>抗日民族统一战线正式形成</strong>。红军主力改编为八路军（约 4.6 万人），南方红军游击队改编为新四军（1.03 万余人）。此后，正面战场与敌后战场协力合作——台儿庄与平型关，同属一个 1938 年的春天前后的中国。</p>
+              <p>而站出来的不只是军队。右边十六张照片会自动轮换（2 秒一张，可点按钮暂停），也可以点箭头或圆点自己翻：一二·九运动里学生的游行队伍、东北抗联的林间身影、回民支队的刺杀训练、南洋机工的车队、上海妇女的缝纫机、四行仓库的机枪手、南泥湾的水田、奔赴前线的学生军——不同的身份，同一条战线。</p>
+            </div>
+            <div class="person">
+              <div class="who">邓玉芬</div>
+              <p>密云的农村母亲，把丈夫和 5 个孩子一个个送上前线，全部战死。课本里她的名字，代表千千万万支前的母亲。</p>
+            </div>
+            <div class="person">
+              <div class="who">马本斋</div>
+              <p>冀中回民支队司令员，率部大小战斗 870 多次。回、汉、满各族群众在敌后共同抗战。</p>
+            </div>
+            <div class="person">
+              <div class="who">陈嘉庚</div>
+              <p>组织南洋华侨筹赈祖国难民总会，海外华侨以汇款、捐赠、回国参战支援祖国抗战。他招募的 3200 余名南侨机工，后来开着车队跑在滇缅公路上。</p>
+            </div>
+          </div>
+          <div class="uf-carousel" id="ufCarousel">
+            <div class="uf-frame" id="ufFrame"></div>
+            <button class="uf-arrow prev" id="ufPrev" type="button" aria-label="上一张">‹</button>
+            <button class="uf-arrow next" id="ufNext" type="button" aria-label="下一张">›</button>
+            <span class="uf-count" id="ufCount">1 / 16</span>
+            <div class="uf-cap">
+              <span class="uf-tag" id="ufTag"></span>
+              <p id="ufText"></p>
+              <p class="src-line" id="ufSrc"></p>
+            </div>
+            <div class="uf-dots" id="ufDots"></div>
+            <div class="uf-pause-row">
+              <button class="uf-pause" id="ufPause" type="button" aria-pressed="false">❚❚ 暂停轮播</button>
+            </div>
+          </div>
+        </div>
+        <div class="identity-strip">
+          <span>接下来十四张照片涵盖的群体：</span>
+          <span class="tag hot">八路军</span><span class="tag hot">国军</span><span class="tag hot">远征军</span>
+          <span class="tag">被服厂工人</span><span class="tag">识字妇孺</span><span class="tag">议政村民</span>
+          <span class="tag">战地护士</span><span class="tag">筑路女工</span><span class="tag">上海与重庆市民</span><span class="tag hot">国际友人与盟军</span>
+          <span>——分布本身，就是全民族与世界反法西斯统一战线的实证。</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6–12 照片页由 JS 生成 -->
+    <div id="photoMount"></div>
+
+    <!-- 13 军服考证 -->
+    <section class="slide" data-title="军服颜色考证" data-time="约 50 秒">
+      <div class="wrap">
+        <div class="kicker">考证对照</div>
+        <h2>军服的颜色，从来不是“一刀切”</h2>
+        <p class="lead">将台儿庄国军（#07）、平型关八路军（#01）与晋察冀被服厂（#08）并置互证：同穿粗布军衣，识别身份靠帽徽、臂章与装具形制，而非 AI 臆想的单一色块。</p>
+        <div class="cmp">
+          <div class="card">
+            <h3>八路军</h3>
+            <dl>
+              <div class="row"><dt>制式</dt><dd>1937 年 8 月改编为国民革命军第八路军，制式与国军相同：立翻领、对襟单排五粒扣、四个明贴袋</dd></div>
+              <div class="row"><dt>标识</dt><dd>青天白日帽徽；“八路”长方形臂章，白底蓝字，8.5 × 6.5 cm</dd></div>
+              <div class="row"><dt>颜色</dt><dd>
+                <div class="chips">
+                  <span class="chip"><i style="background:#8a8578"></i>草木灰 · 骨干（红军自染）</span>
+                  <span class="chip"><i style="background:#6e7276"></i>德国灰 · 早期在册供给</span>
+                  <span class="chip"><i style="background:#98936f"></i>黄绿 · 山东河北（褪成黄灰）</span>
+                  <span class="chip"><i style="background:#7d7f72"></i>灰 · 陕北（褪成草绿）</span>
+                  <span class="chip"><i style="background:#77808c"></i>蓝灰 · 新四军</span>
+                </div>
+              </dd></div>
+              <div class="row"><dt>细节</dt><dd>1941 年后国民政府中断被服供应，改根据地土法生产，颜色更杂；红军时期的八角帽改编后换下珍藏——给 1938 年的八路军戴上八角帽，是时代错置</dd></div>
+            </dl>
+          </div>
+          <div class="card">
+            <h3>国军（国民革命军）</h3>
+            <dl>
+              <div class="row"><dt>制式</dt><dd>1929 年制式为深灰色；1936 年 1 月《陆军服制条例》改为草黄色，“国军＝土黄”只是简化的印象</dd></div>
+              <div class="row"><dt>颜色</dt><dd>
+                <div class="chips">
+                  <span class="chip"><i style="background:#55565a"></i>深灰 · 1929 制式</span>
+                  <span class="chip"><i style="background:#a5976a"></i>草黄 · 1936 制式</span>
+                  <span class="chip"><i style="background:#8b8d66"></i>黄绿 · 中央军夏装</span>
+                  <span class="chip"><i style="background:#757a7d"></i>灰 · 中央军冬装</span>
+                  <span class="chip"><i style="background:#a08b57"></i>土黄呢料 · 第 5 军、教导总队（德进口）</span>
+                </div>
+              </dd></div>
+              <div class="row"><dt>装备</dt><dd>德械师（第 88 师等）配德制 M35 钢盔，1935–1936 年进口 31.5 万顶，盔侧有青天白日徽；远征军后期换美式 M1 钢盔与卡其色毛衣</dd></div>
+              <div class="row"><dt>对照</dt><dd>台儿庄敢死队员与平型关的八路军，同是土布军装——区别在帽徽与臂章，不在颜色</dd></div>
+            </dl>
+          </div>
+        </div>
+        <div class="takeaway"><b>结论：</b>AI 把八路军涂成“同一种灰”、把国军涂成“同一种土黄”，看起来整齐，恰恰抹掉了史实。复原之前，先查制式。</div>
+        <p class="src-line">出处：中文维基百科“八路军”条目服装节；抗日战争纪念网《八路军、新四军军服的变迁》；中文维基百科“中華民國軍服”条目；英文维基 National Revolutionary Army；《中国国家地理》中日单兵装备对照文。</p>
+      </div>
+    </section>
+
+    <!-- 14 反思 -->
+    <section class="slide" data-title="反思：AI 的三种偏差" data-time="约 1 分钟">
+      <div class="wrap">
+        <div class="kicker">批判性反思</div>
+        <h2>让面孔“活”过来之前，先问三件事</h2>
+        <p class="lead" style="margin-bottom:18px;">生成模型训练自现代商业图库，天然带有“鲜艳、讨喜、刻板”的算法偏见——算力可以复原像素，但不能替我们做历史与伦理判断。</p>
+        <div class="grid3 bias-card">
+          <div class="card">
+            <h3><span>偏差一</span>时代错置</h3>
+            <p>服装颜色一刀切、配饰张冠李戴：给 1937 年的士兵加上后来的装备、给改编后的八路军戴上红军时期的八角帽。颜色错了，观众记住的“历史”就错了。</p>
+          </div>
+          <div class="card">
+            <h3><span>偏差二</span>美化苦难</h3>
+            <p>AI 习惯给人物添上微笑、明亮的眼神和干净的衣着，把苦难修成“温情剧照”。废墟上啼哭的婴儿、大隧道里的遇难者——这些画面一旦被美化，史料就变成了道具。</p>
+          </div>
+          <div class="card">
+            <h3><span>偏差三</span>扁平化人物</h3>
+            <p>把不同部队、不同地域、不同身份的人涂成同一副模样，恰好抹掉了统一战线内部的多样性。普通人的“普通”，从来不是千人一面。</p>
+          </div>
+        </div>
+        <div class="takeaway" style="margin-top:30px;">技术能让面孔“动”起来，但只有经过考证的复原，才配得上真实。<b>下一页看我们具体是怎么做的——包括 AI 犯的两个实错。</b></div>
+      </div>
+    </section>
+
+    <!-- 15 方法 -->
+    <section class="slide" data-title="方法：AI 使用过程透明" data-time="约 40 秒">
+      <div class="wrap">
+        <div class="kicker">制作方法</div>
+        <h2>AI 做了什么，我们核查了什么</h2>
+        <div class="steps">
+          <div class="step"><div class="n">1</div><div><h3>找图与择优删补：只收可核验来源</h3><p>优先公有领域与高校特藏：Wikimedia Commons、美国国家档案馆（NARA）、国会图书馆、香港科技大学“沙飞与战时摄影”及中国国家档案局展图，每张记录编号或 DOI。随后增补精选 7 张扩展至 14 张，同时淘汰低清报刊翻拍与现代网络拼贴图；其中《晋察冀被服厂做军衣》（x001338）从档案级源头补齐了早先“军需缝制”主题缺口。</p></div></div>
+          <div class="step"><div class="n">2</div><div><h3>核查来源：逐项比对</h3><p>时间、地点、拍摄者、部队番号、服装制式逐项与课本（第六章）和档案说明互证。例如远征军照片须注明是 1945 年第二次远征，而非 1942 年首次入缅。</p></div></div>
+          <div class="step"><div class="n">3</div><div><h3>整理数据：数字带口径</h3><p>AI 辅助整理时间线与伤亡数字，但每个数字都标注统计来源与口径演变（见数据页小注），不使用无出处的“震撼数字”。</p></div></div>
+          <div class="step"><div class="n">4</div><div><h3>AI 复原：分级上色 + 平滑推近</h3><p>14 张照片按史料与伦理分级处理：8 张做成平滑推近 GIF（平型关、滇缅公路、远征军、被服厂、识字课堂、中苏飞行员、史迪威公路为 AI 上色＋动图；战地护士为黑白推近）；2 张做静态 AI 上色对照（村民讨论村政、杜立特机组）；白求恩手术照仅做黑白去噪增晰（避免血迹纱布染色失真）；上海南站婴儿与重庆惨案坚决不上色不动效，台儿庄保持原片。复原偏差（如远征军帽徽误涂红色）全部留证当场指出；动图通过 <code>render_smooth.py</code> 浮点裁剪消除抖动并缩减网页端尺寸。</p></div></div>
+          <div class="step"><div class="n">5</div><div><h3>嵌入展示：原片与复原版对照</h3><p>复原 GIF 直接嵌回对应照片页，观众可一键在黑白原片与复原版之间切换、可暂停定格、可放大对照——复原不是替换原片，而是与原片并置接受检验。</p></div></div>
+          <div class="step"><div class="n">6</div><div><h3>三级标注：把不确定说出来</h3><p>每条信息标注可信等级，结论先写不确定的地方——考证栏里的「待核实」，比一句假的“确凿无疑”更接近史学。</p></div></div>
+        </div>
+        <div class="legend">
+          <span><span class="vtag ok">已核实</span> 有档案或课本出处，可互证</span>
+          <span><span class="vtag warn">待核实</span> 来源存在分歧或未能直接复核</span>
+          <span><span class="vtag guess">AI 注意</span> AI 生成 / 推测内容，须人工判断</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16 结语 -->
+    <section class="slide" data-title="结语：抗战精神" data-time="约 40 秒">
+      <div class="wrap">
+        <div class="kicker">结语</div>
+        <h2>“兵民是胜利之本”</h2>
+        <p class="lead">《论持久战》说：战争的伟力之最深厚的根源，存在于民众之中。十四张面孔，就是这句话最具体、最滚烫的注脚。课本把这种力量凝练为伟大抗战精神——</p>
+        <ul class="spirit">
+          <li><span>其一</span>天下兴亡，匹夫有责</li>
+          <li><span>其二</span>视死如归，宁死不屈</li>
+          <li><span>其三</span>不畏强暴，血战到底</li>
+          <li><span>其四</span>百折不挠，坚忍不拔</li>
+        </ul>
+        <div class="think">
+          <div class="t">呼应课本思考题</div>
+          <p>为什么说中国的抗日战争是神圣的民族解放战争？——因为站出来的，正是这些最普通的人：修路的母亲、缝衣的工人、识字的妇孺、救护伤员的护士、营救盟军飞行员的村民、绑着手榴弹的士兵。他们大多没有名字留下来，但胜利属于他们。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17 来源与总结 -->
+    <section class="slide" data-title="资料来源与 300 字总结" data-time="备用页">
+      <div class="wrap">
+        <div class="kicker">出处</div>
+        <h2>资料来源</h2>
+        <p class="body">史实依据：《中国近现代史纲要》第六章《中华民族的抗日战争》（pp.139–167）。照片来源与授权如下，点开可查看原图文件页。</p>
+        <table class="src-table">
+          <thead><tr><th>照片</th><th>来源</th><th>授权 / 状态</th></tr></thead>
+          <tbody>
+            <tr><td>平型关的八路军</td><td>沙飞摄，1937.9 · Wikimedia Commons<br /><a href="https://upload.wikimedia.org/wikipedia/commons/c/c5/Battle_of_Pingxingguan_1937.jpg" target="_blank" rel="noopener">Battle_of_Pingxingguan_1937.jpg</a></td><td>PD-China</td></tr>
+            <tr><td>上海南站的婴儿</td><td>H. S. Wong（王小亭）摄，1937.8.28 · 美国国家档案馆 NARA，NAID 535557<br /><a href="https://upload.wikimedia.org/wikipedia/commons/1/13/Bloody_Saturday%2C_Shanghai.jpg" target="_blank" rel="noopener">Bloody_Saturday, Shanghai.jpg</a></td><td>PD-US；Commons 标注 PD-China</td></tr>
+            <tr><td>滇缅公路女工</td><td>原藏美国国会图书馆 · Wikimedia Commons<br /><a href="https://upload.wikimedia.org/wikipedia/commons/5/57/Workers_with_hand_tools_building_Burma_Road2.jpg" target="_blank" rel="noopener">Workers with hand tools building Burma Road2.jpg</a></td><td>PD-China（文件页已核实）</td></tr>
+            <tr><td>战地护士</td><td>沙飞摄，1944 · 香港科技大学图书馆“沙飞与战时摄影”项目<br /><a href="https://digitalhumanities.hkust.edu.hk/shafei/item/x001298/nurses-changing-medicine-for-the-injured-of-the-eighth-route-army" target="_blank" rel="noopener">DOI: 10.14711/spcol/x001298</a></td><td>作者 1950 年去世，作品已过保护期；注明出处与 DOI</td></tr>
+            <tr><td>远征军士兵</td><td>Wikimedia Commons<br /><a href="https://upload.wikimedia.org/wikipedia/commons/4/46/1945_China_Expedition_Force_in_Burma.jpg" target="_blank" rel="noopener">1945 China Expedition Force in Burma.jpg</a></td><td>PD-China（文件页已核实）</td></tr>
+            <tr><td>重庆大隧道惨案</td><td>美国战时新闻局（OWI），Carl Mydans 摄 · NARA 编号 208-AA-132N-4<br /><a href="https://upload.wikimedia.org/wikipedia/commons/3/36/Casualties_of_a_mass_panic_-_Chungking%2C_China.jpg" target="_blank" rel="noopener">Casualties of a mass panic - Chungking, China.jpg</a></td><td>PD-US</td></tr>
+            <tr><td>台儿庄敢死队员</td><td>Wikimedia Commons（Category: National Revolutionary Army）<br /><a href="https://upload.wikimedia.org/wikipedia/commons/0/0b/Chinese_infantry_soldier_preparing_a_suicide_vest_of_Model_24_hand_grenades_at_the_Battle_of_Taierzhuang_against_Japanese_Tanks.jpg" target="_blank" rel="noopener">台儿庄集束手榴弹敢死队员</a></td><td>已核实（原图文件页已打开确认）</td></tr>
+            <tr><td>晋察冀军区被服厂做军衣（新增 #08）</td><td>沙飞摄，1942 · 香港科技大学图书馆“沙飞与战时摄影”项目<br /><a href="https://digitalhumanities.hkust.edu.hk/shafei/item/x001338" target="_blank" rel="noopener">DOI: 10.14711/spcol/x001338</a></td><td>作者 1950 年去世，过保护期；课堂展示注明出处与 DOI</td></tr>
+            <tr><td>战地妇女儿童考察团教识字（新增 #09）</td><td>沙飞摄，1939 · 香港科技大学图书馆“沙飞与战时摄影”项目<br /><a href="https://digitalhumanities.hkust.edu.hk/shafei/item/x001319" target="_blank" rel="noopener">DOI: 10.14711/spcol/x001319</a></td><td>作者 1950 年去世，过保护期；课堂展示注明出处与 DOI</td></tr>
+            <tr><td>村民开会讨论村政（新增 #10）</td><td>沙飞摄，1940 · 香港科技大学图书馆“沙飞与战时摄影”项目<br /><a href="https://digitalhumanities.hkust.edu.hk/shafei/item/x001301" target="_blank" rel="noopener">DOI: 10.14711/spcol/x001301</a></td><td>作者 1950 年去世，过保护期；课堂展示注明出处与 DOI</td></tr>
+            <tr><td>白求恩在松岩口模范病室手术（新增 #11）</td><td>沙飞摄，1938 · 香港科技大学图书馆“沙飞与战时摄影”项目<br /><a href="https://digitalhumanities.hkust.edu.hk/shafei/item/x001339" target="_blank" rel="noopener">DOI: 10.14711/spcol/x001339</a></td><td>作者 1950 年去世，过保护期；仅作黑白去噪修复</td></tr>
+            <tr><td>苏联指挥官向中国飞行员布置任务（新增 #12）</td><td>中华人民共和国国家档案局“苏联支援中国抗日战争”专题展图（原档藏俄罗斯国家影片照片档案馆）</td><td>国家级档案馆公开抗战历史影像，课堂教学引用</td></tr>
+            <tr><td>杜立特机组与中方人员合影（新增 #13）</td><td>美国战时新闻局（OWI）/ NARA 编号 208-N-9092-P（1942 年 4 月后）</td><td>PD-US（美国联邦政府公有领域档案）</td></tr>
+            <tr><td>史迪威公路挂旗会师（新增 #14）</td><td>Sgt. John Gutman 摄，1945.2.6 · 美国国家档案馆 NARA NAID 535573（208-AA-338A-1）</td><td>PD-US（美国联邦政府公有领域档案）</td></tr>
+            <tr><td>本页嵌入的复原影像</td><td>平型关、滇缅公路、远征军、被服厂、识字课堂、中苏飞行员、史迪威公路：AI 上色＋平滑推近 GIF 动图（6 秒循环）；战地护士：黑白推近动图；村政讨论、杜立特机组：AI 上色静帧对照；白求恩手术：黑白去噪增晰</td><td>复原与择优删补说明见制作文档；已知 AI 偏差（如远征军帽徽误涂）均在对应考证栏如实标明</td></tr>
+            <tr><td>统一战线页轮换（新增）</td><td>回民支队刺杀训练，1939–1940 · Wikimedia Commons<br /><a href="https://commons.wikimedia.org/wiki/File:1940mabenzhaiandmuslimarmy.jpg" target="_blank" rel="noopener">File:1940mabenzhaiandmuslimarmy.jpg</a></td><td>Public domain</td></tr>
+            <tr><td>统一战线页轮换（新增）</td><td>滇缅公路运输车队，1942–1945 · 美国陆军军事历史中心官方照片，Wikimedia Commons<br /><a href="https://commons.wikimedia.org/wiki/File:China-bound_convoy_travels_Burma_Road.jpg" target="_blank" rel="noopener">File:China-bound convoy travels Burma Road.jpg</a></td><td>Public domain（画面为车队场景，未注明驾驶者身份，作南侨机工工作场景配图）</td></tr>
+            <tr><td>统一战线页轮换（新增）</td><td>陈嘉庚与李光前、陈六使合影，约 1946 年新加坡 · 陈嘉庚纪念馆，Wikimedia Commons<br /><a href="https://commons.wikimedia.org/wiki/File:Tan_Kah_Kee,_Lee_Kong_Chian,_and_Tan_Lark_Sye,_1946.png" target="_blank" rel="noopener">File:Tan Kah Kee, Lee Kong Chian, and Tan Lark Sye, 1946.png</a></td><td>Public domain（战后不久摄，非战时合影）</td></tr>
+            <tr><td>统一战线页轮换（新增）</td><td>上海妇女缝衣，1937 · Malcolm Rosholt 摄，布里斯托大学 Historical Photographs of China，编号 Ro-n0198<br /><a href="https://hpcbristol.net/visual/Ro-n0198" target="_blank" rel="noopener">hpcbristol.net/visual/Ro-n0198</a></td><td>© Malcolm Rosholt（非公有领域，课堂展示注明出处与编号）</td></tr>
+            <tr><td>统一战线页轮换（新增）</td><td>一二·九运动东北大学学生游行，1935.12.9 · Wikimedia Commons<br /><a href="https://commons.wikimedia.org/wiki/File:NEU_students_marching_in_the_December_9th_Movement.jpg" target="_blank" rel="noopener">File:NEU students marching in the December 9th Movement.jpg</a></td><td>Public domain</td></tr>
+            <tr><td>统一战线页轮换（新增）</td><td>东北抗日联军战士 · Wikimedia Commons<br /><a href="https://commons.wikimedia.org/wiki/File:Northeast_Anti-Japanese_United_Army_SOLDIERS.jpg" target="_blank" rel="noopener">File:Northeast Anti-Japanese United Army SOLDIERS.jpg</a></td><td>Public domain（文件页标注摄于 1940 年代，具体时间未注明）</td></tr>
+            <tr><td>统一战线页轮换（新增）</td><td>新四军部队过桥北上，1945 · Wikimedia Commons<br /><a href="https://commons.wikimedia.org/wiki/File:N4A_march.jpg" target="_blank" rel="noopener">File:N4A march.jpg</a></td><td>Public domain（原图分辨率较低，仅作轮换展示）</td></tr>
+            <tr><td>统一战线页轮换（新增）</td><td>四行仓库国军机枪组，1937 年淞沪会战期间 · Wikimedia Commons（书刊扫描件，底部附中文说明，保留原样）</td><td>Public domain（文件页未注明精确拍摄日期，本页只写 1937 年）</td></tr>
+            <tr><td>统一战线页轮换（新增）</td><td>八路军插箭岭长城行军，1937 年秋，河北涞源 · 沙飞摄，Wikimedia Commons</td><td>Public domain</td></tr>
+            <tr><td>统一战线页轮换（新增）</td><td>南泥湾水田，1943 年，陕甘宁边区 · Wikimedia Commons</td><td>PD-China（原图为宽幅低分辨率，仅作轮换展示）</td></tr>
+            <tr><td>统一战线页轮换（新增）</td><td>学生军奔赴前线，1941 年底第三次长沙会战期间 · 美国海军国家博物馆藏</td><td>Public domain</td></tr>
+          </tbody>
+        </table>
+        <div class="summary-box">
+          <h3>作品总结<span>全文 311 字（含标点）· 随作品一并提交</span></h3>
+          <p>本次作品以《中国近现代史纲要》第六章为依据，在原七张档案照片基础上择优增补并淘汰低质配图，精选十四组抗战人物真实影像——涵盖平型关八路军、台儿庄敢死队、上海南站婴儿、重庆市民、滇缅公路筑路妇孺、晋察冀护士、被服厂工人、识字妇孺、议政村民、远征军，以及白求恩、苏联援华空军、杜立特机组与史迪威公路盟军——综合运用AI图像上色、图生视频微动效与Python帧平滑脚本，做成24页交互展示，代码与核查记录在GitHub全程可溯。制作中严核史料：保留远征军“红帽徽”等AI错置作课堂反例；对护士与白求恩手术弃用失真上色，对上海南站婴儿与重庆惨案坚守不上色不动效。历史的温度在普通人面孔上，唯有经考证与伦理克制的复原，才配得上真实。</p>
+        </div>
+        <div class="card" style="padding:14px 24px; margin-top:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; background:rgba(197,155,88,0.08); border:1px solid rgba(197,155,88,0.35); border-left:4px solid var(--gold); border-radius:8px;">
+          <div class="kicker" style="margin:0; font-size:14px; color:var(--gold); font-weight:700; letter-spacing:.12em;">小组成员与分工</div>
+          <div style="font-size:1.02rem; color:var(--ink);">
+            <strong style="color:var(--gold);">杨李：</strong>交互式网页 PPT 研发 ｜ 5分钟微纪录片制作 &nbsp;&nbsp;｜&nbsp;&nbsp;
+            <strong style="color:var(--gold);">刘骁：</strong>历史照片 AI 复原与考证 ｜ 课堂汇报（P6–P24） &nbsp;&nbsp;｜&nbsp;&nbsp;
+            <strong style="color:var(--gold);">朱龙溢：</strong>抗战史料与数据考证收集 ｜ 课堂汇报（P1–P5）
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+
+  </div><!-- /stage -->
+
+  <!-- bottom bar -->
+  <nav class="bar" aria-label="翻页">
+    <div class="progress" id="progress"></div>
+    <button class="toc-btn" id="tocBtn" type="button">目录</button>
+    <button class="toc-btn" id="fsBtn" type="button">全屏 ⛶</button>
+    <button class="nav-btn" id="prevBtn" type="button" aria-label="上一页">‹</button>
+    <span class="page-no"><b id="pageCur">1</b> / <span id="pageTotal">24</span></span>
+    <button class="nav-btn" id="nextBtn" type="button" aria-label="下一页">›</button>
+    <span class="title-mini" id="titleMini"></span>
+    <span class="kbd-hint">← → 翻页 · 空格 下一页 · 点击空白处也可翻页 · F 全屏 · M 切换动效</span>
+  </nav>
+
+  <!-- TOC overlay -->
+  <div class="overlay" id="tocOverlay" role="dialog" aria-label="目录">
+    <div class="head">
+      <h2>目录</h2>
+      <button class="close-btn" id="tocClose" type="button">关闭 ✕</button>
+    </div>
+    <p class="sub">点击任意条目跳转到对应页。</p>
+    <div class="toc-grid" id="tocGrid"></div>
+  </div>
+
+  <!-- lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-label="照片放大">
+    <button class="x" id="lbClose" type="button" aria-label="关闭">✕</button>
+    <img id="lbImg" alt="" />
+    <video id="lbVideo" muted loop playsinline controls style="display:none"></video>
+    <div class="cap"><div class="t" id="lbTitle"></div><div class="s" id="lbSrc"></div></div>
+  </div>
+
+  <script>
+  (function(){
+    "use strict";
+
+    /* ============ photo slide data ============ */
+    var PHOTOS = [
+      {
+        id:"p1", file:"../photos/web/pingxingguan.jpg",
+        restore:{ gif:"assets/restore_pingxingguan.gif", still:"../restored/pingxingguan_color.webp" },
+        no:"照片 01 / 14", title:"平型关的八路军战士",
+        when:"1937 年 9 月 · 山西平型关 · 沙飞 摄",
+        alt:"八路军步兵、骑兵开进平型关关口",
+        story:[
+          "1937 年 9 月 25 日乔沟伏击之后，115 师官兵开进平型关。镜头拍的不是开火，而是<strong>胜利之后走进关口的一刻</strong>——枪背在肩上，队伍走得不快。",
+          "课本记载：此役歼敌 1000 余人、击毁汽车 100 多辆，是全民族抗战以来中国军队主动寻歼敌人的<strong>第一次重大胜利</strong>，打破了“日军不可战胜”的神话。",
+          "照片里没有冲锋，也没有欢呼——胜利之后短暂的平静，恰恰是最容易被历史叙述跳过的那部分。"
+        ],
+        verify:[
+          ["ok","已核实","沙飞摄于 1937 年 9 月平型关；同系列还有机枪组伏击画面。"],
+          ["guess","AI 反思","抗战初期八路军后勤匮乏，军服实为粗灰布、土黄与草绿混穿，甚至混有缴获的日军昭五式军衣。AI 习惯将八路军一刀切染成均匀深灰——这种“整齐划一”恰是算法的时代错置。"]
+        ],
+        source:"来源：Wikimedia Commons，File: Battle of Pingxingguan 1937.jpg（英文维基“Battle of Pingxingguan”词条首图），PD-China。"
+      },
+      {
+        id:"p2", file:"../photos/web/bloody_saturday.jpg",
+        no:"照片 02 / 14", title:"上海南站的婴儿",
+        when:"1937 年 8 月 28 日 · 上海 · H. S. Wong（王小亭）摄",
+        alt:"日军轰炸后的上海南站废墟上啼哭的婴儿",
+        story:[
+          "1937 年 8 月 28 日，日军轰炸上海南站。一个浑身是血的婴儿坐在废墟的铁轨上哭——身边没有大人。摄影师王小亭按下快门后，把婴儿抱到了安全地带。",
+          "照片发表后的一年内，全球逾 <strong>1.36 亿人</strong>看到它。日军称照片是伪造的，悬赏 5 万美元捉拿王小亭。一张婴儿的照片，就这样成了一场战争的动员令。",
+          "它后来以“血腥的星期六”（Bloody Saturday）之名传遍世界，成为 20 世纪传播最广的战争照片之一。"
+        ],
+        verify:[
+          ["ok","已核实","美国国家档案馆 NARA 藏，编号 NAID 535557；拍摄者、日期、地点均有档案记录。"],
+          ["guess","伦理决定","这张照片记录的是日军对平民的无差别轰炸。给废墟中啼哭的幼童涂抹鲜艳色彩、强加动效，无异于把历史苦难当成视觉消费品。本作品坚守底线：面对惨案与死难者，克制技术，保持黑白静默。"]
+        ],
+        source:"来源：美国国家档案馆 NARA（NAID 535557），PD-US；Wikimedia Commons 文件页标注 PD-China。赫斯特新闻社发布。"
+      },
+      {
+        id:"p3", file:"../photos/web/burma_road.jpg",
+        restore:{ gif:"assets/restore_burma_road.gif", still:"../restored/burma_road_color.webp" },
+        no:"照片 03 / 14", title:"修筑滇缅公路的妇女",
+        when:"1937 年 · 云南滇缅公路工地",
+        alt:"滇缅公路工地上徒手修路的妇女儿童",
+        story:[
+          "没有压路机，就用石碾子人拉；没有炸药，就用柴火烧石头再浇冷水。1937–1938 年，<strong>20 万民工</strong>徒手修出 1154 公里滇缅公路——其中多为妇女、儿童与老人，因为青壮年已经上了前线。",
+          "约 <strong>2300 名</strong>筑路者死在工地上。这条“拿命铺出来的”公路，是大后方与外界相连的抗战生命线。",
+          "工地上几乎没有像样的机械：石碾靠人拉，路基靠肩挑——照片里弯着腰的人群，就是这条公路真正的“施工机械”。"
+        ],
+        verify:[
+          ["ok","已核实","原图藏美国国会图书馆；Wikimedia Commons 文件页标注 PD-China（已核实）。"],
+          ["warn","素材代位","原计划选用“重庆军需工厂女工”照片，但网传图多无法核实原始档案出处；我们已将大后方民众筑路照与后文《晋察冀被服厂做军衣》（x001338）协同呈现，共同补齐战时女性生产与劳动图景。"]
+        ],
+        source:"来源：原藏美国国会图书馆；Wikimedia Commons，File: Workers with hand tools building Burma Road2.jpg，PD-China。"
+      },
+      {
+        id:"p4", file:"../photos/web/nurse.jpg",
+        restore:{ gif:"assets/motion_nurse.gif", bw:true },
+        no:"照片 04 / 14", title:"战地护士",
+        when:"1944 年 · 晋察冀根据地 · 沙飞 摄",
+        alt:"护士为八路军伤员换药（沙飞摄，1944）",
+        story:[
+          "沙飞的镜头里，戴口罩的护士正低头为伤员换药。没有无菌手术室，没有充足的药品——敌后医疗，就是这样一双手一天一天撑下来的。",
+          "1938 年，加拿大医生白求恩来到晋察冀，在同样的条件下建立战地医疗体系（见后文 #11）。这张照片里的每一天，都是他的日常。",
+          "镜头离得很近，近到能看清她手指的动作。在敌后，救护不是躲在后方的事，而是和战斗同样靠前的一件事。"
+        ],
+        verify:[
+          ["ok","已核实","香港科技大学图书馆“沙飞与战时摄影”数字人文项目藏，DOI: 10.14711/spcol/x001298；沙飞 1950 年去世，作品已过著作权保护期，课堂展示注明出处。"],
+          ["guess","未上色说明","因原片光影反差较大，AI 上色模型多次将护士手中的白色纱布与药水误染成失真的血红色。秉持宁缺毋滥的考证原则，主动弃用失真上色稿，保留黑白原片配平滑推镜，如实记录工具局限。"]
+        ],
+        source:"来源：香港科技大学图书馆数字典藏，DOI: 10.14711/spcol/x001298。"
+      },
+      {
+        id:"p5", file:"../photos/web/expedition.jpg",
+        restore:{ gif:"assets/restore_expedition.gif", still:"../restored/expedition_color.webp" },
+        no:"照片 05 / 14", title:"远征军士兵",
+        when:"1945 年 · 缅北反攻期间",
+        alt:"席地而坐的中国远征军士兵，草鞋、绑腿、中正式步枪",
+        story:[
+          "草鞋、土布军服、绑腿、中正式步枪——他席地而坐。装备与意志的反差，是这张照片最刺眼的地方。",
+          "1942 年 2 月，首批 10 万中国远征军入缅作战，戴安澜殉国；1944 年“一寸山河一寸血，十万青年十万军”，大批知识青年投笔从戎；1945 年 1 月，中印公路打通。",
+          "他没有看镜头。行军间隙，坐下就是休息，站起来就是出发——这样的坐姿，在远征军留下的照片里反复出现。"
+        ],
+        verify:[
+          ["warn","待核实","拍摄于 1945 年第二次远征（滇西缅北反攻期间），<strong>不是</strong> 1942 年首次入缅——引用时不可混用。"],
+          ["guess","AI 注意","本页复原版有两处实错：帽徽被涂成红色，国军帽徽实为青天白日徽；军服被涂得过于整齐划一的土黄，史料中的土布军服本是混杂褪色的。另，Commons 文件页称其为“全国按 1/10 选拔的最强壮的士兵”，此说带主观色彩，本页只取画面事实。"]
+        ],
+        source:"来源：Wikimedia Commons，File: 1945 China Expedition Force in Burma.jpg，PD-China（文件页已核实）。"
+      },
+      {
+        id:"p6", file:"../photos/web/chungking.jpg",
+        no:"照片 06 / 14", title:"重庆大轰炸后的市民",
+        when:"1941 年 6 月 5 日 · 重庆较场口",
+        alt:"重庆较场口大隧道惨案遇难者遗体",
+        veil:true,
+        story:[
+          "1941 年 6 月 5 日夜，日军空袭重庆，市民涌回较场口大隧道躲避。洞内缺氧、人群挤压——<strong>躲进洞里的人，没有死于炸弹</strong>。",
+          "1938 年 2 月至 1944 年 12 月，重庆遭 268 次空袭。照片里的台阶，是这座城市里最普通的一段路。",
+          "这里没有枪炮声。市民死于拥挤与缺氧——战争夺走普通人性命的方式，从来不止一种。"
+        ],
+        verify:[
+          ["ok","已核实","照片为美国战时新闻局（OWI）档案，NARA 编号 208-AA-132N-4，据《Bombing of Chongqing》词条为 Carl Mydans 摄，PD-US。"],
+          ["warn","数字争议","遇难人数说法从 900 余到 4000 余不等：本页“约 4000 人”取 NARA 原说明，学界估计不一，引用时须注明。"],
+          ["guess","AI 注意","这张照片<strong>绝不能</strong>被“美化”或动效化。默认模糊呈现，是本作品对逝者的基本态度。"]
+        ],
+        source:"来源：美国战时新闻局（OWI）/ 美国国家档案馆，编号 208-AA-132N-4，PD-US。"
+      },
+      {
+        id:"p7", file:"../photos/web/taierzhuang.jpg",
+        no:"照片 07 / 14", title:"台儿庄的国军敢死队员",
+        when:"1938 年 3–4 月 · 山东台儿庄",
+        alt:"国军士兵身绑集束手榴弹，战友为他整理",
+        story:[
+          "没有反坦克炮，就把集束手榴弹绑在身上。战友俯身替他整理绑带——这个动作，比任何口号都安静。台儿庄巷战中，敢死队以这样的方式，一次炸毁日军坦克 4 辆。",
+          "他与平型关的八路军穿着同样的土布军装，只是帽徽与臂章不同。<strong>同一面抗日旗帜之下</strong>，这是正面战场的面孔。",
+          "照片没有拍下他走向坦克的那一刻，只留下出发之前。替他整理绑带的那双手很稳——这是普通人离战争最近的样子。"
+        ],
+        verify:[
+          ["ok","已核实","画面内容与台儿庄之战（1938.3–4，李宗仁指挥）背景相符；课本载台儿庄大捷。"],
+          ["ok","已核实","照片授权已在 Wikimedia Commons 原图文件页核实：画面为身绑 24 式手榴弹的国军步兵，摄于台儿庄之战。"]
+        ],
+        source:"来源：Wikimedia Commons（Category: National Revolutionary Army），授权已核实。"
+      },
+      {
+        id:"p8", file:"../photos/web/uniform_factory.jpg",
+        restore:{ gif:"assets/restore_uniform_factory.gif", still:"../restored/uniform_factory_color.webp" },
+        no:"照片 08 / 14", title:"晋察冀被服厂的军衣缝制者",
+        when:"1942 年 · 晋察冀军区供给部被服厂 · 沙飞 摄",
+        alt:"晋察冀军区供给部被服厂人员在露天用脚踏缝纫机赶制军衣",
+        story:[
+          "露天土院里架起几台老式脚踏缝纫机，桌案上堆满裁好的粗布棉衣片——这是 1942 年<strong>晋察冀军区供给部被服厂</strong>的工作现场。",
+          "1941 年后敌后经济封锁加剧，根据地开展大生产与自给自足，从纺纱织布到裁剪缝制全部依靠自己动手。每一件冬装，都是前线战士熬过太行寒冬的底气。",
+          "这组镜头恰好也补齐了此前“军需缝制女工”网图无确凿档案出处的缺口，并成为军服颜色考证页的直接物证。"
+        ],
+        verify:[
+          ["ok","已核实","香港科技大学图书馆“沙飞与战时摄影”项目藏，原题《晉察冀軍區供給部被服廠做軍衣》（1942 年），DOI: 10.14711/spcol/x001338。"],
+          ["guess","AI 反思","画面中左前方军帽留有青天白日徽轮廓，众人棉袄呈现青灰、深蓝与土褐混杂——这恰符合根据地土法染布的史实，但各人衣物的具体靛蓝/草木灰深浅仍属模型推断。"]
+        ],
+        source:"来源：香港科技大学图书馆“沙飞与战时摄影”特藏，DOI: 10.14711/spcol/x001338。"
+      },
+      {
+        id:"p9", file:"../photos/web/literacy_class.jpg",
+        restore:{ gif:"assets/restore_literacy_class.gif", still:"../restored/literacy_class_color.webp" },
+        no:"照片 09 / 14", title:"战地妇女儿童的识字课堂",
+        when:"1939 年 · 晋察冀根据地 · 沙飞 摄",
+        alt:"战地妇女儿童考察团女教员在玉米地旁教妇女儿童读书识字",
+        story:[
+          "身后是高高的青纱帐，脚下是黄土地——女教员挽起袖口站在队列前，数十名农村妇女与女童席地而坐，手里捧着油印课本，怀里还抱着幼童。",
+          "抗日根据地不只是游击作战的后方，更是一场深刻的社会动员与乡村启蒙：通过识字班、冬学和识字牌，原本不识字的农村女性第一次写下自己的名字，读懂“抗日救国”的传单。",
+          "战火并没有停下教育。玉米地前的这一排排低头读本的身影，让“人民战争”真正扎进了最基层的村庄。"
+        ],
+        verify:[
+          ["ok","已核实","香港科技大学图书馆“沙飞与战时摄影”项目藏，原题《戰地婦女兒童考察團教婦女兒童讀書識字》（1939 年），DOI: 10.14711/spcol/x001319。"],
+          ["guess","AI 反思","模型为背景玉米地与土地赋予了写实的低饱和绿与土黄色，人物服饰还原为灰褐、浅蓝粗布；角落保留香港科技大学图书馆馆藏印记，确保图源全程可溯。"]
+        ],
+        source:"来源：香港科技大学图书馆“沙飞与战时摄影”特藏，DOI: 10.14711/spcol/x001319。"
+      },
+      {
+        id:"p10", file:"../photos/web/village_council.jpg",
+        restore:{ still:"../restored/village_council_color.webp", staticOnly:true },
+        no:"照片 10 / 14", title:"民主选举前讨论村政的村民",
+        when:"1940 年 · 晋察冀根据地 · 沙飞 摄",
+        alt:"村民在民主选举村长前围坐开会讨论村政，左右架设长枪",
+        story:[
+          "灰瓦土墙之间，男女村民围坐成圆圈讨论村政，记事员俯身笔记——而画面的最左边和最右边，各自架着一排上了刺刀的步枪。",
+          "课本第六章讲述敌后抗日民主政权实行的<strong>“三三制”原则</strong>与“减租减息”政策：在日军频繁“扫荡”的间隙，民兵一边放哨护村，一边用手里的豆子或选票选出自己的村长。",
+          "<strong>一手持枪保卫家园，一手坐下民主议事</strong>——这是敌后根据地之所以不可战胜的秘密。"
+        ],
+        verify:[
+          ["ok","已核实","香港科技大学图书馆“沙飞与战时摄影”项目藏，原题《民主選舉村長之前村中男女開會討論村政》（1940 年），DOI: 10.14711/spcol/x001301。"],
+          ["guess","复原说明","本张提供静态 AI 上色对照（未强加动态摇镜）：画面还原了华北冬日枯树灰瓦与棉衣土蓝、褐灰质感，但具体衣物色调仍属参考性推断。"]
+        ],
+        source:"来源：香港科技大学图书馆“沙飞与战时摄影”特藏，DOI: 10.14711/spcol/x001301。"
+      },
+      {
+        id:"p11", file:"../photos/web/bethune_surgery.jpg",
+        restore:{ still:"../restored/bethune_surgery_bw.webp", bw:true, staticOnly:true },
+        no:"照片 11 / 14", title:"松岩口模范病室的白求恩",
+        when:"1938 年 · 山西五台松岩口 · 沙飞 摄",
+        alt:"诺尔曼·白求恩在山西五台松岩口模范病室为八路军伤员动手术",
+        story:[
+          "1938 年，加拿大共产党员诺尔曼·白求恩率医疗队来到晋察冀。画面里，他弯腰站在简陋的手术台旁手持止血钳，围裙上溅满斑斑血迹；身旁的八路军助手戴着青天白日帽徽军帽，全神贯注协助手术。",
+          "这是 1938 年山西五台松岩口模范病室——课本第 157 页特别记述了白求恩与印度援华医疗队柯棣华等国际主义战士不远万里来华救死扶伤、以身殉职的事迹。",
+          "与前面的战地护士（#04）并置观看，能更真切地理解：<strong>中国抗战的敌后战场，从来不孤单</strong>。"
+        ],
+        verify:[
+          ["ok","已核实","香港科技大学图书馆“沙飞与战时摄影”项目藏，原题《白求恩在山西五台松岩口模范病室動手術》（1938 年），DOI: 10.14711/spcol/x001339。"],
+          ["guess","伦理克制","面对野战手术台上的鲜血与创伤，我们刻意放弃 AI 上色与动效——既防止模型把纱布、血渍染成猎奇失真的艳红色，也守住对生命与伤痛的尊重，仅保留黑白去噪修复对照。"]
+        ],
+        source:"来源：香港科技大学图书馆“沙飞与战时摄影”特藏，DOI: 10.14711/spcol/x001339。"
+      },
+      {
+        id:"p12", file:"../photos/web/soviet_pilots.jpg",
+        restore:{ gif:"assets/restore_soviet_pilots.gif", still:"../restored/soviet_pilots_color.webp" },
+        no:"照片 12 / 14", title:"并肩守卫领空的中苏飞行员",
+        when:"抗战初期（1937–1941 年）· 国家档案局展图",
+        alt:"苏联援华航空志愿队指挥官向中国飞行员布置战斗任务，背景为双翼战斗机",
+        story:[
+          "机场跑道旁停着伊-15 型双翼战斗机，苏联指挥官身着厚呢大衣、戴着白手套，正持命令纸向身披毛领飞行服与风镜的中国年轻飞行员布置任务。",
+          "课本记载：全面抗战爆发之初、美英尚未对日宣战前，<strong>苏联是最早向中国提供大规模军事援助与志愿空军的国家</strong>。两千多名苏联航空志愿队人员来华参战，在南京、武汉、兰州、重庆长空与日机血战，二百余名苏联飞行员血洒中国大地。",
+          "在最艰难、最孤立无援的战略防御初期，中国并不是一个人在天空作战。"
+        ],
+        verify:[
+          ["ok","已核实","中国国家档案局“苏联支援中国抗日战争”专题公布档案图，原档藏俄罗斯国家影片照片档案馆。"],
+          ["guess","AI 反思","模型将毛领连体飞行服染为卡其橄榄色、将大衣染为深橄榄绿，整体符合苏式寒区航空装具特征，但受限于早期洗印颗粒感，肩章与飞行员面部肤色略偏平均化。"]
+        ],
+        source:"来源：中国国家档案局公开抗战历史影像（原藏俄罗斯国家影片照片档案馆）。"
+      },
+      {
+        id:"p13", file:"../photos/web/doolittle_rescue.jpg",
+        restore:{ still:"../restored/doolittle_rescue_color.webp", staticOnly:true },
+        no:"照片 13 / 14", title:"获中国军民营救的杜立特机组",
+        when:"1942 年 4 月后 · 中国 · NARA 档案",
+        alt:"杜立特中校与部分空袭东京美军机组成员在中国获救后与中方人员合影",
+        story:[
+          "1942 年 4 月 18 日，美军杜立特中校（前排右三）率领 B-25 轰炸机编队奇袭东京后燃油耗尽，被迫在浙江、江西一带跳伞或迫降。",
+          "语言完全不通的中国普通农民、村干部与游击队员冒着生命危险，连夜将 64 名美军飞行员藏进祠堂与山洞、安全护送转移。日军为此发动报复性的浙赣战役，使用细菌战屠杀搜捕，致使<strong>约 25 万中国平民惨遭杀戮</strong>。",
+          "站在美军飞行员身旁这些朴素的中国面孔，用最沉重的代价诠释了什么是世界反法西斯同盟的生死情谊。"
+        ],
+        verify:[
+          ["ok","已核实","美国战时新闻局（OWI）/ NARA 档案编号 208-N-9092-P（PD-US），可与美国海军历史与遗产司令部（NHHC）档案互证。"],
+          ["guess","复原说明","本张为静态 AI 修复对照，呈现克制的暖棕皮夹克与土布中山装色调；飞行员胸前队徽因原片强反光过曝，AI 保留留白而未擅自填绘图案。"]
+        ],
+        source:"来源：美国国家档案馆 NARA（208-N-9092-P），PD-US。"
+      },
+      {
+        id:"p14", file:"../photos/web/stilwell_flags.jpg",
+        restore:{ gif:"assets/restore_stilwell_flags.gif", still:"../restored/stilwell_flags_color.webp" },
+        no:"照片 14 / 14", title:"史迪威公路会师挂旗的中美士兵",
+        when:"1945 年 2 月 6 日 · 中印边界 · Sgt. John Gutman 摄",
+        alt:"美军非裔士兵与中国士兵在吉普车前分别插上青天白日满地红旗与美国星条旗",
+        story:[
+          "1945 年 2 月 6 日，将近三年来第一支跨国重型补给车队即将在史迪威公路（中印公路）跨入中国国境。吉普车引擎盖前，一名美国非裔士兵双手护着青天白日满地红旗，旁边的中国士兵握着美国星条旗。",
+          "三年前滇缅公路被切断后，数十万中国远征军、中美印筑路工程兵与民工硬是在热带丛林与崇山峻岭间打通了这条钢铁动脉。此刻车头插起的两面旗帜，标志着中国战区战略大反攻的物资咽喉重新敞开。",
+          "从 1931 年白山黑水的孤军奋战，到 1945 年世界反法西斯战场的并肩会师——胜利，属于每一个站在一起的普通人。"
+        ],
+        verify:[
+          ["ok","已核实","美国国家档案馆 NARA 藏，编号 NAID 535573（208-AA-338A-1），美国陆军信号兵团 Sgt. John Gutman 摄于 1945 年 2 月 6 日，PD-US。"],
+          ["guess","AI 对比观察","有趣的是：在《远征军士兵》（#05）中 AI 把小尺寸帽徽错涂成了红色；而在本图中，因为两面旗帜构图清晰、比例较大，AI 准确还原了青天白日满地红与星条旗配色——这正是 AI 语义识别尺度依赖性的绝佳证明。"]
+        ],
+        source:"来源：美国国家档案馆 NARA（NAID 535573 / 208-AA-338A-1），Sgt. John Gutman 摄，PD-US。"
+      }
+    ];
+
+    var VTAG = { ok:"已核实", warn:"待核实", guess:"AI 注意" };
+
+    function buildPhotoSlides(){
+      var mount = document.getElementById("photoMount");
+      var html = "";
+      PHOTOS.forEach(function(p){
+        var rows = p.verify.map(function(v){
+          var label = (v[0]==="warn" && v[1]==="选题说明") ? "选题说明" : VTAG[v[0]];
+          return '<div class="vrow"><span class="vtag '+v[0]+'">'+label+'</span><span>'+v[2]+'</span></div>';
+        }).join("");
+        var story = p.story.map(function(s){ return "<p>"+s+"</p>"; }).join("");
+        var veil = "";
+        if(p.veil){
+          veil = '<div class="veil" id="veil-'+p.id+'">'
+            + '<p>重庆较场口大隧道惨案</p>'
+            + '<p class="small">1941 年 6 月 5 日 · 照片涉及遇难者遗体，请慎重观看</p>'
+            + '<button type="button" data-reveal="'+p.id+'">查看原图</button></div>';
+        }
+        var media = '<img class="main'+(p.veil?' veiled':'')+'" id="img-'+p.id+'" src="'+p.file+'" alt="'+p.alt+'" loading="lazy" data-photo="'+p.id+'" />';
+        var badge = "", tools = "";
+        if(p.restore){
+          var hasGif = !!p.restore.gif;
+          var targetSrc = hasGif ? p.restore.gif : p.restore.still;
+          var badgeText = hasGif
+            ? (p.restore.bw ? 'GIF 动图 · 黑白原片推近，未上色' : 'AI 上色复原 · GIF 动图 · 镜头推近')
+            : (p.restore.bw ? '黑白影调修复 · 仅去噪增晰，未上色' : 'AI 上色复原 · 静态高保真对照');
+          var btnText = hasGif
+            ? (p.restore.bw ? '看动态版' : '看复原版')
+            : (p.restore.bw ? '看修复版' : '看上色版');
+          media += '<img class="main gif" id="gif-'+p.id+'" data-gif="'+targetSrc+'" alt="'+p.alt+'（复原版）" style="display:none" data-photo="'+p.id+'" />';
+          badge = '<span class="restore-badge" id="rbadge-'+p.id+'" style="display:none">'+badgeText+'</span>';
+          tools = '<button class="tool-btn" type="button" data-restore="'+p.id+'" aria-pressed="false"><span class="sw"></span>'+btnText+'</button>';
+          if(hasGif){
+            tools += '<button class="tool-btn" type="button" data-pause="'+p.id+'" style="display:none">❚❚ 暂停</button>';
+          }
+        }
+        tools += '<button class="tool-btn" type="button" data-zoom="'+p.id+'">点击照片放大 ⤢</button>';
+        html += '<section class="slide photo-slide" data-title="'+p.title+'" data-time="约 45 秒">'
+          + '<div class="wrap"><div class="photo-layout">'
+          +   '<div class="photo-box"><div class="frame">'
+          +     media
+          +     badge
+          +     veil
+          +   '</div>'
+          +   '<div class="photo-tools">'
+          +     tools
+          +   '</div>'
+          +   '<p class="src-line">'+p.source+'</p>'
+          +   '</div>'
+          +   '<div class="photo-info">'
+          +     '<div class="kicker">'+p.no+'</div>'
+          +     '<div class="who-line"><h2>'+p.title+'</h2></div>'
+          +     '<div class="when">'+p.when+'</div>'
+          +     '<div class="story">'+story+'</div>'
+          +     '<div class="verify open" id="verify-'+p.id+'">'
+          +       '<button class="verify-head" type="button" data-verify="'+p.id+'">考证栏 · 来源与 AI 注意点 <span class="chev">▾</span></button>'
+          +       '<div class="verify-body">'+rows+'</div>'
+          +     '</div>'
+          +   '</div>'
+          + '</div></div></section>';
+      });
+      mount.outerHTML = html;
+    }
+    buildPhotoSlides();
+
+    /* ============ timeline ============ */
+    var TL = [
+      { d:"1931.9.18", e:"九一八事变", t:"九一八事变", b:"日本发动九一八事变，1932 年 2 月东北全境沦陷；国民党奉行“攘外必先安内”“不抵抗”，局部抗战由此开始。中共中央 9 月 20 日发表抗日宣言，东北抗日联军（周保中、赵一曼等）在白山黑水间坚持斗争。" },
+      { d:"1937.7.7", e:"七七事变", t:"七七事变 · 全民族抗战开始", b:"日军进攻卢沟桥，日本全面侵华战争开始，中国全民族抗战爆发。8 月 25 日红军改编为八路军（约 4.6 万人）；9 月 22–23 日第二次国共合作，抗日民族统一战线正式形成；抗战初期苏联率先派遣航空志愿队来华助战。→ 照片 02、12" },
+      { d:"1937.9", e:"平型关大捷", t:"平型关大捷", b:"八路军 115 师在乔沟伏击日军，歼敌 1000 余人、击毁汽车 100 多辆——全民族抗战以来中国军队主动寻歼敌人的第一次重大胜利，打破“日军不可战胜”的神话。→ 照片 01" },
+      { d:"1938.3", e:"台儿庄大捷", t:"台儿庄大捷", b:"李宗仁指挥中国军队在台儿庄取得大捷。此前有佟麟阁、赵登禹殉国，谢晋元率“八百壮士”死守四行仓库——正面战场与敌后战场协力合作。→ 照片 07" },
+      { d:"1940.8", e:"百团大战", t:"百团大战", b:"1940 年 8 月至 1941 年 1 月，八路军 105 个团、20 余万人投入战斗。1944 年春，敌后战场已抗击全部侵华日军的 64%；狼牙山五壮士、刘老庄连出自敌后战场；敌后根据地开展民主选举、识字教育与被服生产。→ 照片 08、09、10" },
+      { d:"1942.2", e:"远征军入缅", t:"中国远征军入缅", b:"中国远征军进入缅甸作战，戴安澜殉国。中国是世界反法西斯战争的东方主战场：太平洋战争前抗击日军陆军 80% 左右，之后仍牵制其半数以上；同年 4 月杜立特机组迫降获中国军民营救，1945 年中印公路通车会师。→ 照片 05、13、14" },
+      { d:"1945.8.15", e:"日本投降", t:"日本投降 · 胜利", b:"7 月 26 日波茨坦公告；8 月 9 日苏联红军进入东北；8 月 15 日日本天皇发布《终战诏书》；9 月 2 日日本签署投降书，侵华日军 128 万人投降；9 月 3 日为中国人民抗日战争胜利纪念日；10 月 25 日台湾光复。" }
+    ];
+    var tlNodes = document.getElementById("tlNodes");
+    var tlDetail = document.getElementById("tlDetail");
+    TL.forEach(function(n, i){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "tl-node" + (i===0 ? " on" : "");
+      b.innerHTML = '<span class="yr">'+n.d+'</span><span class="tl-dot"></span><span class="ev">'+n.e+'</span>';
+      b.addEventListener("click", function(){
+        tlNodes.querySelectorAll(".tl-node").forEach(function(x){ x.classList.remove("on"); });
+        b.classList.add("on");
+        tlDetail.innerHTML = '<h3><span>'+n.d+'</span>'+n.t+'</h3><p>'+n.b+'</p>';
+      });
+      tlNodes.appendChild(b);
+    });
+    tlDetail.innerHTML = '<h3><span>'+TL[0].d+'</span>'+TL[0].t+'</h3><p>'+TL[0].b+'</p>';
+
+    /* ============ united front carousel ============ */
+    var UF = [
+      { src:"assets/dec9_students.jpg", alt:"一二·九运动中打着东北大学校旗的学生游行队伍", tag:"学生 · 一二·九运动", text:"1935 年 12 月 9 日，北平。打着东北大学校旗的学生走上街头——“华北之大，已经安放不得一张平静的书桌了”。学生救亡，是全民族抗战的先声。", src2:"Wikimedia Commons，Public domain（文件页标注摄于 1935 年 12 月 9 日）。" },
+      { src:"../photos/web/pingxingguan.jpg", alt:"八路军步兵、骑兵开进平型关关口", tag:"八路军 · 平型关", text:"1937 年 9 月，八路军 115 师在乔沟伏击战之后开进平型关——敌后战场的身影。", src2:"沙飞 摄 · Wikimedia Commons，PD-China。" },
+      { src:"../photos/web/taierzhuang.jpg", alt:"台儿庄国军敢死队员身绑集束手榴弹，战友为他整理", tag:"国军 · 台儿庄敢死队", text:"1938 年台儿庄巷战，没有反坦克炮的士兵把集束手榴弹绑在身上——正面战场的面孔。", src2:"Wikimedia Commons，授权已核实。" },
+      { src:"assets/anti_japanese_united_army.jpg", alt:"东北抗日联军战士在林间持枪合影", tag:"东北抗联 · 白山黑水", text:"九一八事变后最早燃起的抗日烽火：东北抗日联军在密营与林海雪原间坚持游击，周保中、赵一曼出自这支队伍——十四年抗战的起点，就有他们的身影。", src2:"Wikimedia Commons，Public domain（文件页标注摄于 1940 年代，具体时间未注明）。" },
+      { src:"assets/new_fourth_army.jpg", alt:"新四军部队携带物资过桥北上", tag:"新四军 · 华中敌后", text:"1945 年，新四军部队过桥北上。1937 年南方红军游击队改编为新四军（1.03 万余人），此后在华中敌后坚持抗战，与八路军南北呼应。", src2:"Wikimedia Commons，Public domain（原图分辨率较低，仅作轮换展示）。" },
+      { src:"../photos/web/expedition.jpg", alt:"中国远征军士兵席地而坐，草鞋、绑腿、中正式步枪", tag:"国军 · 中国远征军", text:"1945 年缅北反攻期间，草鞋、绑腿、土布军服——走出国门作战的中国军人。", src2:"Wikimedia Commons，PD-China。" },
+      { src:"../photos/web/burma_road.jpg", alt:"滇缅公路工地上徒手修路的妇女儿童", tag:"民众 · 滇缅公路筑路民工", text:"1937–1938 年，20 万民工徒手修出 1154 公里滇缅公路，其中多为妇女、儿童与老人。", src2:"原藏美国国会图书馆 · Wikimedia Commons，PD-China。" },
+      { src:"../photos/web/nurse.jpg", alt:"护士为八路军伤员换药", tag:"医护 · 战地护士", text:"1944 年晋察冀根据地，护士低头为伤员换药——没有无菌手术室，只有这一双手。", src2:"沙飞 摄 · 香港科技大学图书馆藏，DOI: 10.14711/spcol/x001298。" },
+      { src:"../united_front/huimin.jpg", alt:"冀中军区回民支队进行刺杀训练", tag:"回族 · 回民支队", text:"1939–1940 年，冀中。马本斋率领的回民支队大小战斗 870 余次——少数民族武装是全民族抗战的一部分。", src2:"Wikimedia Commons，Public domain（原图分辨率较低，仅作轮换展示）。" },
+      { src:"../united_front/convoy.jpg", alt:"运输车队行进在滇缅公路上", tag:"南洋华侨 · 机工", text:"滇缅公路上的运输车队。1939–1942 年，3200 余名南洋华侨青年应陈嘉庚号召回国，在这条路上抢运 50 余万吨抗战物资，1000 余人牺牲。", src2:"美国陆军军事历史中心官方照片，Public domain。注：画面为滇缅公路运输车队，未注明驾驶者身份，是南侨机工工作场景配图，不可写成图为南侨机工本人。" },
+      { src:"../united_front/tan_kah_kee_1946.png", alt:"陈嘉庚、李光前、陈六使三人合影", tag:"南洋华侨 · 筹赈领袖", text:"左起：陈嘉庚、李光前、陈六使。陈嘉庚任南洋华侨筹赈祖国难民总会主席，组织海外华侨捐款、汇款，并亲自招募南侨机工回国。", src2:"陈嘉庚纪念馆 · Wikimedia Commons，Public domain。注：约 1946 年摄于新加坡，战后不久，非战时合影。" },
+      { src:"../united_front/sewing.jpg", alt:"上海妇女俯身在缝纫机前缝衣，机旁放着一只碗", tag:"上海 · 缝衣妇女", text:"1937 年，上海。缝纫机旁的一只碗——妇女为前方缝军衣、做军鞋、慰劳伤员，支前不只在战场。", src2:"Malcolm Rosholt 摄 · 布里斯托大学 Historical Photographs of China，编号 Ro-n0198，© Malcolm Rosholt。" },
+      { src:"../united_front_more/sihang_warehouse.jpg", alt:"四行仓库沙袋工事后的国军机枪组（画面底部带中文说明）", tag:"国军 · 四行仓库", text:"1937 年，淞沪会战期间。沙袋之后的国军机枪手——课本里谢晋元率“八百壮士”死守四行仓库，说的就是苏州河北岸这片阵地。", src2:"Wikimedia Commons，Public domain（书刊扫描件，底部附中文说明，保留原样；文件页未注明精确拍摄日期，本页只写 1937 年）。" },
+      { src:"../united_front_more/eighth_route_marching.jpg", alt:"八路军在插箭岭长城一线行军", tag:"八路军 · 行军", text:"1937 年秋，河北涞源插箭岭。八路军沿长城一线行军——1937 年 8 月改编之后，这支队伍正开赴华北抗日前线。", src2:"沙飞 摄 · Wikimedia Commons，Public domain。" },
+      { src:"../united_front_more/nanniwan.jpg", alt:"南泥湾水田里插秧的359旅官兵（宽幅）", tag:"359 旅 · 南泥湾", text:"1943 年，陕甘宁边区南泥湾。359 旅开荒种稻、水田插秧——大生产运动里，前线之外的另一条战线：自己动手，丰衣足食。", src2:"Wikimedia Commons，PD-China（原图为宽幅低分辨率，仅作轮换展示）。" },
+      { src:"assets/students_corps.jpg", alt:"持枪的学生军青年列队奔赴前线", tag:"青年学生 · 学生军", text:"1941 年底，第三次长沙会战期间。持枪奔赴前线的学生军——据档案说明，开战以来中国已训练 20 余万青年男女，奔赴各条战线。", src2:"美国海军国家博物馆藏，Public domain。" }
+    ];
+    var ufIdx = 0, ufTimer = null, ufPaused = false;
+    var ufFrame = document.getElementById("ufFrame");
+    var ufDots = document.getElementById("ufDots");
+    var ufBox = document.getElementById("ufCarousel");
+    var ufImgs = [], ufDotEls = [];
+    var ufReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    UF.forEach(function(u, i){
+      var im = document.createElement("img");
+      im.src = u.src; im.alt = u.alt; im.loading = "lazy";
+      if(i === 0) im.classList.add("on");
+      ufFrame.appendChild(im); ufImgs.push(im);
+      var d = document.createElement("button");
+      d.type = "button";
+      d.className = "uf-dot" + (i === 0 ? " on" : "");
+      d.setAttribute("aria-label", "第 " + (i + 1) + " 张：" + u.tag);
+      d.addEventListener("click", function(){ ufGo(i); ufRestart(); });
+      ufDots.appendChild(d); ufDotEls.push(d);
+    });
+    function ufShow(){
+      ufImgs.forEach(function(im, i){ im.classList.toggle("on", i === ufIdx); });
+      ufDotEls.forEach(function(d, i){ d.classList.toggle("on", i === ufIdx); });
+      document.getElementById("ufTag").textContent = UF[ufIdx].tag;
+      document.getElementById("ufText").textContent = UF[ufIdx].text;
+      document.getElementById("ufSrc").textContent = "来源：" + UF[ufIdx].src2;
+      document.getElementById("ufCount").textContent = (ufIdx + 1) + " / " + UF.length;
+    }
+    function ufGo(i){ ufIdx = (i + UF.length) % UF.length; ufShow(); }
+    function ufStart(){
+      if(ufTimer || ufReduced || ufPaused) return;
+      ufTimer = setInterval(function(){ ufGo(ufIdx + 1); }, 2000);
+    }
+    function ufStop(){ if(ufTimer){ clearInterval(ufTimer); ufTimer = null; } }
+    function ufRestart(){ ufStop(); ufStart(); }
+    var ufPauseBtn = document.getElementById("ufPause");
+    ufPauseBtn.addEventListener("click", function(){
+      ufPaused = !ufPaused;
+      ufPauseBtn.setAttribute("aria-pressed", ufPaused ? "true" : "false");
+      ufPauseBtn.textContent = ufPaused ? "▶ 继续轮播" : "❚❚ 暂停轮播";
+      if(ufPaused){ ufStop(); }
+      else {
+        var s = document.querySelector(".slide.active");
+        if(s && s.contains(ufBox)) ufStart();
+      }
+    });
+    document.getElementById("ufPrev").addEventListener("click", function(){ ufGo(ufIdx - 1); ufRestart(); });
+    document.getElementById("ufNext").addEventListener("click", function(){ ufGo(ufIdx + 1); ufRestart(); });
+    ufBox.addEventListener("mouseenter", ufStop);
+    ufBox.addEventListener("mouseleave", function(){
+      var s = document.querySelector(".slide.active");
+      if(s && s.contains(ufBox)) ufStart();
+    });
+    ufFrame.addEventListener("click", function(){ ufGo(ufIdx + 1); ufRestart(); });
+    ufShow();
+
+    /* ============ deck navigation ============ */
+    var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+    var total = slides.length;
+    document.getElementById("pageTotal").textContent = total;
+    var cur = 0, counted = {};
+    var prevBtn = document.getElementById("prevBtn");
+    var nextBtn = document.getElementById("nextBtn");
+    var pageCur = document.getElementById("pageCur");
+    var progress = document.getElementById("progress");
+    var titleMini = document.getElementById("titleMini");
+
+    function countUp(slide, idx){
+      if(counted[idx]) return; counted[idx] = true;
+      slide.querySelectorAll(".count").forEach(function(el){
+        var target = parseFloat(el.getAttribute("data-count"));
+        var dec = parseInt(el.getAttribute("data-dec") || "0", 10);
+        var t0 = null, dur = 1400;
+        function tick(ts){
+          if(!t0) t0 = ts;
+          var k = Math.min((ts - t0) / dur, 1);
+          var eased = 1 - Math.pow(1 - k, 3);
+          el.textContent = (target * eased).toFixed(dec);
+          if(k < 1) requestAnimationFrame(tick); else el.textContent = target.toFixed(dec).replace(/\.0$/, "");
+        }
+        if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){ el.textContent = target; return; }
+        requestAnimationFrame(tick);
+      });
+    }
+
+    function go(n, dir){
+      n = Math.max(0, Math.min(total - 1, n));
+      slides[cur].classList.remove("active", "back");
+      cur = n;
+      var s = slides[cur];
+      s.classList.toggle("back", dir === -1);
+      s.classList.add("active");
+      s.scrollTop = 0;
+      pageCur.textContent = cur + 1;
+      titleMini.textContent = s.getAttribute("data-title") || "";
+      progress.style.width = (total > 1 ? (cur / (total - 1)) * 100 : 100) + "%";
+      prevBtn.disabled = cur === 0;
+      nextBtn.disabled = cur === total - 1;
+      countUp(s, cur);
+      if(s.contains(ufBox)) ufStart(); else ufStop();
+      markToc();
+    }
+    prevBtn.addEventListener("click", function(){ go(cur - 1, -1); });
+    nextBtn.addEventListener("click", function(){ go(cur + 1, 1); });
+
+    /* ============ TOC ============ */
+    var tocOverlay = document.getElementById("tocOverlay");
+    var tocGrid = document.getElementById("tocGrid");
+    slides.forEach(function(s, i){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "toc-item";
+      b.innerHTML = '<span class="no">'+(i + 1)+'</span><span><span class="tt">'+(s.getAttribute("data-title") || "")+'</span><div class="tm">第 '+(i + 1)+' 页 / 共 '+total+' 页</div></span>';
+      b.addEventListener("click", function(){ closeToc(); go(i, i > cur ? 1 : -1); });
+      tocGrid.appendChild(b);
+    });
+    function markToc(){
+      tocGrid.querySelectorAll(".toc-item").forEach(function(el, i){ el.classList.toggle("cur", i === cur); });
+    }
+    function openToc(){ tocOverlay.classList.add("open"); }
+    function closeToc(){ tocOverlay.classList.remove("open"); }
+    document.getElementById("tocBtn").addEventListener("click", openToc);
+    document.getElementById("tocClose").addEventListener("click", closeToc);
+
+    /* fullscreen */
+    var fsBtn = document.getElementById("fsBtn");
+    function syncFsBtn(){ fsBtn.textContent = document.fullscreenElement ? "退出全屏 ⛶" : "全屏 ⛶"; }
+    fsBtn.addEventListener("click", function(){
+      if(document.fullscreenElement){ document.exitFullscreen(); }
+      else if(document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen(); }
+    });
+    document.addEventListener("fullscreenchange", syncFsBtn);
+
+    /* ============ lightbox ============ */
+    var lb = document.getElementById("lightbox");
+    var lbImg = document.getElementById("lbImg");
+    var lbVideo = document.getElementById("lbVideo");
+    var lbTitle = document.getElementById("lbTitle");
+    var lbSrc = document.getElementById("lbSrc");
+    function openLb(p, restored){
+      lbVideo.style.display = "none";
+      lbImg.style.display = "";
+      var useRestored = !!(restored && p.restore);
+      var hasGif = !!(useRestored && p.restore.gif);
+      lbImg.src = useRestored ? (p.restore.gif || p.restore.still) : p.file;
+      lbImg.alt = p.alt;
+      lbImg.classList.toggle("gif", useRestored);
+      lbImg.classList.toggle("still-color", useRestored);
+      var suffix = "（黑白原片）";
+      if(useRestored){
+        if(hasGif) suffix = p.restore.bw ? "（动态版 · GIF）" : "（AI 上色复原 · GIF 动图）";
+        else suffix = p.restore.bw ? "（黑白影调修复）" : "（AI 上色复原）";
+      }
+      lbTitle.textContent = p.title + " · " + p.when + suffix;
+      lbSrc.textContent = p.source;
+      lb.classList.add("open");
+    }
+    function closeLb(){
+      lb.classList.remove("open");
+      lbImg.removeAttribute("src");
+      lbImg.classList.remove("gif");
+    }
+    document.getElementById("lbClose").addEventListener("click", closeLb);
+    lb.addEventListener("click", function(e){ if(e.target === lb) closeLb(); });
+
+    function photoById(id){ for(var i = 0; i < PHOTOS.length; i++){ if(PHOTOS[i].id === id) return PHOTOS[i]; } return null; }
+
+    document.getElementById("stage").addEventListener("click", function(e){
+      var t = e.target;
+      /* restore toggle: B&W original <-> restored GIF (loads on first open, then auto-plays & loops) */
+      var rb = t.closest ? t.closest("[data-restore]") : null;
+      if(rb){
+        var rp = photoById(rb.getAttribute("data-restore"));
+        var rimg = document.getElementById("img-" + rp.id);
+        var gif = document.getElementById("gif-" + rp.id);
+        var pbtn = document.querySelector('[data-pause="' + rp.id + '"]');
+        var badge = document.getElementById("rbadge-" + rp.id);
+        var showGif = gif.style.display === "none";
+        var hasGif = !!rp.restore.gif;
+        var defaultBtnLabel = hasGif ? (rp.restore.bw ? "看动态版" : "看复原版") : (rp.restore.bw ? "看修复版" : "看上色版");
+        rb.setAttribute("aria-pressed", showGif ? "true" : "false");
+        rb.lastChild.textContent = showGif ? "看黑白原片" : defaultBtnLabel;
+        if(showGif){
+          if(!gif.getAttribute("src") || gif.getAttribute("data-paused") === "1"){
+            gif.src = gif.getAttribute("data-gif");
+            gif.removeAttribute("data-paused");
+          }
+          rimg.style.display = "none";
+          gif.style.display = "block";
+          if(pbtn){ pbtn.style.display = ""; pbtn.textContent = "❚❚ 暂停"; }
+          badge.style.display = "block";
+        } else {
+          gif.style.display = "none";
+          rimg.style.display = "";
+          if(pbtn){ pbtn.style.display = "none"; }
+          badge.style.display = "none";
+        }
+        return;
+      }
+      /* pause / resume restored GIF: freeze on the still frame, resume restarts the loop */
+      var pb = t.closest ? t.closest("[data-pause]") : null;
+      if(pb){
+        var pp = photoById(pb.getAttribute("data-pause"));
+        var pg = document.getElementById("gif-" + pp.id);
+        if(pg.getAttribute("data-paused") === "1"){
+          pg.src = pg.getAttribute("data-gif");
+          pg.removeAttribute("data-paused");
+          pb.textContent = "❚❚ 暂停";
+        } else {
+          pg.src = pp.restore.still ? pp.restore.still : pp.file;
+          pg.setAttribute("data-paused", "1");
+          pb.textContent = "▶ 继续播放";
+        }
+        return;
+      }
+      /* verify expand */
+      var vb = t.closest ? t.closest("[data-verify]") : null;
+      if(vb){
+        document.getElementById("verify-" + vb.getAttribute("data-verify")).classList.toggle("open");
+        return;
+      }
+      /* P6 reveal */
+      var rv = t.closest ? t.closest("[data-reveal]") : null;
+      if(rv){
+        var p2 = photoById(rv.getAttribute("data-reveal"));
+        var img2 = document.getElementById("img-" + p2.id);
+        img2.classList.remove("veiled");
+        var veil = document.getElementById("veil-" + p2.id);
+        if(veil) veil.style.display = "none";
+        return;
+      }
+      /* zoom button or media click */
+      var zb = t.closest ? t.closest("[data-zoom]") : null;
+      var mediaEl = (t.getAttribute && t.getAttribute("data-photo")) ? t : null;
+      var pid = zb ? zb.getAttribute("data-zoom") : (mediaEl ? mediaEl.getAttribute("data-photo") : null);
+      if(pid){
+        var p3 = photoById(pid);
+        var img3 = document.getElementById("img-" + p3.id);
+        if(img3.classList.contains("veiled")) return; /* must reveal first */
+        var gif3 = document.getElementById("gif-" + p3.id);
+        var restoredOn = !!(gif3 && gif3.style.display !== "none" && gif3.getAttribute("data-paused") !== "1");
+        openLb(p3, restoredOn);
+      }
+    });
+
+    /* keyboard */
+    document.addEventListener("keydown", function(e){
+      if(lb.classList.contains("open")){
+        if(e.key === "Escape" || e.key === "Enter") closeLb();
+        return;
+      }
+      if(tocOverlay.classList.contains("open")){
+        if(e.key === "Escape") closeToc();
+        return;
+      }
+      if(e.key === "ArrowRight" || e.key === " " || e.key === "PageDown"){ e.preventDefault(); go(cur + 1, 1); }
+      else if(e.key === "ArrowLeft" || e.key === "PageUp"){ e.preventDefault(); go(cur - 1, -1); }
+      else if(e.key === "Home"){ go(0, -1); }
+      else if(e.key === "End"){ go(total - 1, 1); }
+      else if(e.key === "Escape"){ openToc(); }
+      else if(e.key === "f" || e.key === "F"){ fsBtn.click(); }
+      else if(e.key === "m" || e.key === "M"){ var rb = slides[cur].querySelector("[data-restore]"); if(rb) rb.click(); }
+    });
+
+    /* click blank area -> next page */
+    document.getElementById("stage").addEventListener("click", function(e){
+      if(lb.classList.contains("open") || tocOverlay.classList.contains("open")) return;
+      var t = e.target;
+      if(t.closest && t.closest("button, a, video, input, select, textarea, .verify, .uf-carousel, .veil")) return;
+      if(t.getAttribute && t.getAttribute("data-photo")) return; /* photo media opens lightbox instead */
+      var sel = window.getSelection ? window.getSelection() : null;
+      if(sel && sel.toString()) return; /* don't hijack text selection */
+      go(cur + 1, 1);
+    });
+
+    /* touch swipe */
+    var tx = null, ty = null;
+    document.addEventListener("touchstart", function(e){
+      if(lb.classList.contains("open") || tocOverlay.classList.contains("open")) return;
+      tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY;
+    }, { passive:true });
+    document.addEventListener("touchend", function(e){
+      if(tx === null) return;
+      var dx = e.changedTouches[0].clientX - tx;
+      var dy = e.changedTouches[0].clientY - ty;
+      if(Math.abs(dx) > 64 && Math.abs(dx) > Math.abs(dy) * 1.6){
+        if(dx < 0) go(cur + 1, 1); else go(cur - 1, -1);
+      }
+      tx = null; ty = null;
+    }, { passive:true });
+
+    go(0, 1);
+  })();
+  </script>
+  </body>
+</html>
